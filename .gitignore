@@ -1,0 +1,19 @@
+# PHP dependencies
+/vendor/
+/composer.lock
+
+# Smarty compiled templates & cache
+/templates_c/
+/cache/
+
+# Environment/config
+/.env
+config/database.php      # or other sensitive config
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE files
+.idea/
+*.log

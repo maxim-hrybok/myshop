@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Set the base path for the rewrite rules.
+    RewriteBase /
+
+    # Rule 1: Do not apply to existing files.
+    RewriteCond %{REQUEST_FILENAME} !-f
+
+    # Rule 2: Do not apply to existing directories.
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Rule 3: For everything else, send the request to index.php.
+    RewriteRule . index.php [L]
+</IfModule>
