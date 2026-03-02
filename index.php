@@ -65,6 +65,21 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/register', ['App\Controllers\AuthController', 'showRegisterForm']);
     $r->addRoute('POST', '/register', ['App\Controllers\AuthController', 'handleRegister']);
     $r->addRoute('GET', '/logout', ['App\Controllers\AuthController', 'logout']);
+
+    // Admin routes
+    // Dashboard
+    $r->addRoute('GET', '/admin', ['App\Controllers\AdminController', 'dashboard']);
+
+    // Create
+    $r->addRoute('GET', '/admin/create', ['App\Controllers\AdminController', 'create']);
+    $r->addRoute('POST', '/admin/store', ['App\Controllers\AdminController', 'store']);
+    
+    // Edit (Dynamic ID)
+    $r->addRoute('GET', '/admin/edit/{id:\d+}', ['App\Controllers\AdminController', 'edit']);
+    $r->addRoute('POST', '/admin/update/{id:\d+}', ['App\Controllers\AdminController', 'update']);
+    
+    // Delete (Usually POST for security)
+    $r->addRoute('POST', '/admin/delete/{id:\d+}', ['App\Controllers\AdminController', 'delete']);
 });
 
 // 3. === DISPATCH THE REQUEST ===

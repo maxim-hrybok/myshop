@@ -19,6 +19,12 @@
 
                 {if isset($session.user_id)}
                     <li id="logreg"><a href="/">Welcome, {$session.user_name|escape}!</a></li>
+
+                            {* Check if admin *}
+                        {if isset($session.is_admin) && $session.is_admin == 1}
+                            <li id="logreg"><a href="/admin" style="color: #ff6633;">Admin Panel</a></li>
+                        {/if}
+                    
                     <li id="logreg"><a href="/logout">Logout</a></li>
                 {else}
                     <li id="logreg"><a href="/login">Login</a></li>

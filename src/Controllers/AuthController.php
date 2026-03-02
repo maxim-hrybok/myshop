@@ -40,6 +40,9 @@ class AuthController {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['first_name'];
 
+            # Admin flag (if you have an is_admin column in your users table you have access to product management features)
+            $_SESSION['is_admin'] = $user['is_admin'] ?? 0;
+
             // Redirect to the homepage after login.
             header('Location: /');
             exit();
