@@ -78,41 +78,51 @@
 
 
 
-.card__price::after {
-    content: "₽";
-    margin-left: 4px;
-    position: relative;
+.card__prices {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: center; /* Выравниваем цены по центру */
+    gap: 10px; /* Отступ между старой и новой ценой */
 }
 
+/* Цена со скидкой (Красная и жирная) */
 .new-price {
     font-weight: 700;
-    font-size: 19px;
-    color: #414141;
-    display: flex;
-    flex-wrap: wrap-reverse;
+    font-size: 20px;
+    color: #e63946; /* Ярко-красный цвет для акцента */
+    margin: 0;
 }
 
+/* Убираем лишний текст "Со скидкой" */
 .new-price::before {
-    content: "Со скидкой";
-    font-weight: 400;
-    font-size: 13px;
-    color: #bfbfbf;
+    content: none; 
 }
 
+/* Старая цена (Серая и перечеркнутая) */
 .old-price {
     font-weight: 400;
-    font-size: 17px;
-    color: #606060;
-    display: flex;
-    flex-wrap: wrap-reverse;
-    justify-content: flex-end;
+    font-size: 14px;
+    color: #999;
+    text-decoration: line-through; /* Перечеркивание */
+    margin: 0;
 }
 
+/* Убираем лишний текст "Обычная" */
 .old-price::before {
-    content: "Обычная";
-    font-weight: 400;
-    font-size: 13px;
-    color: #bfbfbf;
+    content: none;
 }
 
-.card__t
+/* Обычная цена (если скидки нет) */
+.price {
+    font-weight: 700;
+    font-size: 19px;
+    color: #333;
+    margin: 0;
+}
+
+/* Знак рубля/доллара через CSS (опционально, лучше в HTML, но оставим как было) */
+/*.card__price::after,
+/*.new-price::after,
+/*.price::after {
+    /* content: "₽"; /* <-- Лучше уберите это и добавьте знак валюты прямо в TPL */
+/*}

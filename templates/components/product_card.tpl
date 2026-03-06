@@ -12,15 +12,20 @@
         {/if}
     </div>
 
-    <!-- Bottom Part -->
-    <div class="card__bottom">
+   <div class="card__bottom">
         <div class="card__prices">
              {if $product.discount > 0}
-                {* We can do calculations right in the template and use modifiers for formatting *}
+                {* 1. price with discount check *}
                 {$discountedPrice = $product.price * (1 - $product.discount / 100)}
-                <p class="new-price">${$discountedPrice|number_format:2}</p>
+                
+                {* 2. new price with discount *}
+                <div class="new-price">${$discountedPrice|number_format:2}</div>
+                
+                {* 3.old price *}
+                <div class="old-price">${$product.price|number_format:2}</div>
             {else}
-                <p class="price">${$product.price|number_format:2}</p>
+                {* no discount *}
+                <div class="price">${$product.price|number_format:2}</div>
             {/if}
         </div>
 
@@ -28,6 +33,19 @@
             {$product.name|escape}
         </a>
 
-        {* <button class="card__add">Add to Cart</button> *}
+        <!-- add to cart to product cards ))-->
+        <form action="/cart/add/{$product.id}" method="POST">
+             {* stock check  *}
+             {if isset($product.stock) && $product.stock > 0}
+                <button type="submit" class="card__add">Add to Cart</button>
+             {else}
+                 {if !isset($product.stock)} 
+                    {* stock check*}
+                    <button type="submit" class="card__add">Add to Cart</button>
+                 {else}
+                    <button type="button" class="card__add" style="background: grey; cursor: not-allowed;" disabled>Sold Out</button>
+                 {/if}
+             {/if}
+        </form>
     </div>
 </div>
