@@ -11,7 +11,7 @@ class OrderModel {
     public function createOrder(int $userId, float $totalPrice): int {
         $stmt = $this->pdo->prepare("INSERT INTO orders (user_id, total_price, status) VALUES (?, ?, 'completed')");// почему изначально комплитид , потом хочу сделать вкладку в админке для подтверждения заказа пока ок
         $stmt->execute([$userId, $totalPrice]);
-        return (int)$this->pdo->lastInsertId();// зачем почему и как !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        return (int)$this->pdo->lastInsertId();
     }
 
     // Add individual items to the order

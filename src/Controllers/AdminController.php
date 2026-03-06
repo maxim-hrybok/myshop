@@ -48,10 +48,13 @@ class AdminController {
         $name = $_POST['name'];
         $price = (float)$_POST['price'];
         $discount = (int)$_POST['discount'];
+
+         $stock = (int)$_POST['stock']; // New line to get stock from form
+
         $desc = $_POST['description'];
         $img = $_POST['image_url'];
 
-        $this->productModel->createProduct($name, $price, $discount, $desc, $img);
+        $this->productModel->createProduct($name, $price, $discount, $stock, $desc, $img);
         header('Location: /admin');
         exit();
     }
@@ -83,10 +86,13 @@ class AdminController {
         $name = $_POST['name'];
         $price = (float)$_POST['price'];
         $discount = (int)$_POST['discount'];
+
+            $stock = (int)$_POST['stock']; // New line to get stock from form
+
         $desc = $_POST['description'];
         $img = $_POST['image_url'];
 
-        $this->productModel->updateProduct($id, $name, $price, $discount, $desc, $img);
+        $this->productModel->updateProduct($id, $name, $price, $discount, $stock, $desc, $img);
         header('Location: /admin');
         exit();
     }

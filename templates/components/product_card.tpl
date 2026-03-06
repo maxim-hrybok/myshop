@@ -28,6 +28,6 @@
             {$product.name|escape}
         </a>
 
-        <button class="card__add">Add to Cart</button>
+        {* <button class="card__add">Add to Cart</button> *}
     </div>
 </div>

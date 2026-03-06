@@ -17,6 +17,12 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 15px;">
+        <label>Stock Quantity (Keys):</label>
+        {* Default to 0 if creating new, or show existing stock *}
+        <input type="number" name="stock" value="{$product.stock|default:'0'}" required min="0" style="width: 100%; padding: 8px;">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 15px;">
             <label>Discount (%):</label>
             <input type="number" name="discount" value="{$product.discount|default:'0'}" style="width: 100%; padding: 8px;">
         </div>

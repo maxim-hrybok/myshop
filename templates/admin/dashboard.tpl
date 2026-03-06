@@ -13,6 +13,7 @@
                 <th>Image</th>
                 <th>Name</th>
                 <th>Price</th>
+                <th>Stock</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -23,6 +24,9 @@
                 <td><img src="{$p.image_url|default:'#'}" width="50"></td>
                 <td>{$p.name|escape}</td>
                 <td>${$p.price}</td>
+                <td style="font-weight: bold; {if $p.stock < 5}color: red;{else}color: green;{/if}">
+                {$p.stock}
+                </td>
                 <td>
                     <a href="/admin/edit/{$p.id}" style="color: blue; margin-right: 10px;">Edit</a>
                     

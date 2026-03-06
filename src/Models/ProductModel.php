@@ -46,15 +46,17 @@ class ProductModel {
           * @param string $name The name of the product.
           * @param float $price The price of the product.
           * @param int $discount The discount percentage for the product.
+            * @param int $stock The stock quantity of the product.
           * @param string $description The description of the product.
           * @param string $imageUrl The URL of the product's image.
           * @return bool True if the product was created successfully, false otherwise.
           */
-    public function createProduct(string $name, float $price, int $discount, string $description,  string $imageUrl): bool{
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO products (name, price, discount, description, image_url) VALUES (?, ?, ?, ?, ?)"
-        );
-        return $stmt->execute([$name, $price, $discount, $description, $imageUrl]);
+      public function createProduct(string $name, float $price, int $discount, int $stock, string $description, string $imageUrl): bool {
+        // Added 'stock' to SQL
+        $sql = "INSERT INTO products (name, price, discount, stock, description, image_url) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $this->pdo->prepare($sql);
+        // Added $stock to execution array
+        return $stmt->execute([$name, $price, $discount, $stock, $description, $imageUrl]);
     }
 
         /**
@@ -63,16 +65,18 @@ class ProductModel {
          * @param int $id The ID of the product to update.
          * @param string $name The name of the product.
          * @param float $price The price of the product.
+         * @param int $stock The stock quantity of the product.
          * @param int $discount The discount percentage for the product.
          * @param string $description The description of the product.
          * @param string $imageUrl The URL of the product's image.
          * @return bool True if the product was updated successfully, false otherwise.
          */
-    public function updateProduct(int $id, string $name, float $price, int $discount, string $description, string $imageUrl): bool {
-        $stmt = $this->pdo->prepare(
-            "UPDATE products SET name = ?, price = ?, discount = ?, description = ?, image_url = ? WHERE id = ?"
-        );
-        return $stmt->execute([$name, $price, $discount, $description, $imageUrl, $id]);
+        public function updateProduct(int $id, string $name, float $price, int $discount, int $stock, string $description, string $imageUrl): bool {
+        // Added 'stock' to SQL
+        $sql = "UPDATE products SET name = ?, price = ?, discount = ?, stock = ?, description = ?, image_url = ? WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        // Added $stock to execution array
+        return $stmt->execute([$name, $price, $discount, $stock, $description, $imageUrl, $id]);
     }
 
      /**
