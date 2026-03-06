@@ -84,5 +84,44 @@ class ProductModel {
         $stmt = $this->pdo->prepare("DELETE FROM products WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    /**
+      * Checks if enough stock exists
+      * @param int $id The ID of the product to find.
+      * @return int The current stock level of the product, or 0 if not found.
+      */
+    public function getStock(int $id): int {
+        $stmt = $this->pdo->prepare("SELECT stock FROM products WHERE id = ?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $result ? (int)$result['stock'] : 0;
+    }
+
+     /**
+      * Decreases stock after purchase
+      * @param int $id The ID of the product to find.
+      * @param int $quantity The quantity to decrease the stock by.
+      * @return bool True if the stock was decreased successfully, false otherwise.
+      */
+    public function decreaseStock(int $id, int $quantity): bool {
+        $stmt = $this->pdo->prepare("UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?");
+        return $stmt->execute([$quantity, $id, $quantity]);
+    }
+
+    public function getProductWithCalculations(int $id): ?array {
+    $product = $this->findProductById($id);
+    if (!$product) return null;
+    // БИЗНЕС-ЛОГИКА ЗДЕСЬ
+    $product['final_price'] = $product['price'];
+    if ($product['discount'] > 0) {
+        $product['final_price'] = $product['price'] * (1 - $product['discount'] / 100);
+    }
+    // Форматирование для view (спорный момент, но лучше здесь, чем в tpl)
+    $product['is_discounted'] = $product['discount'] > 0;
+    
+    return $product;
+    
+    }
+
 }
 ?>

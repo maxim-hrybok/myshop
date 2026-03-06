@@ -59,7 +59,7 @@ class AuthController {
         $password = $_POST['password'] ?? '';
         $firstName = $_POST['first_name'] ?? '';
 
-        // !!!gonna add server-side validation here (e.g., check if fields are empty, if email is valid).
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!gonna add server-side validation here (e.g., check if fields are empty, if email is valid).
 
         $userModel = new UserModel($this->pdo);
 

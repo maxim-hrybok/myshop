@@ -1,6 +1,6 @@
 # PHP dependencies
 /vendor/
-/composer.lock
+
 
 # Smarty compiled templates & cache
 /templates_c/
@@ -8,7 +8,7 @@
 
 # Environment/config
 /.env
-config/database.php      # or other sensitive config
+
 
 # OS files
 Thumbs.db

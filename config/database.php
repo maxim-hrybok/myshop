@@ -2,12 +2,8 @@
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__. '/..');
 $dotenv->load();
+//in .env file we have DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_CHARSET
 
-//$host = 'localhost';
-//$db   = 'project';
-//$user = 'root';
-//$pass = 'test1';
-//$charset = 'utf8mb4';
 $host = $_ENV['DB_HOST'];
 $db   = $_ENV['DB_NAME'];
 $user = $_ENV['DB_USER'];

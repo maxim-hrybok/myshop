@@ -37,7 +37,7 @@ class AdminController {
     public function create(){
         $this->smarty->assign('pageTitle', 'Add New Product');
 
-        $this->smarty->assign('product', null); // No existing product data for the create form ########### update undeerstanding of this line @@@@@@@
+        $this->smarty->assign('product', null); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! No existing product data for the create form ########### update undeerstanding of this line @@@@@@@
         $this->smarty->display('admin/form.tpl');
     }
 

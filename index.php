@@ -80,6 +80,16 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     
     // Delete (Usually POST for security)
     $r->addRoute('POST', '/admin/delete/{id:\d+}', ['App\Controllers\AdminController', 'delete']);
+
+    // CART
+    $r->addRoute('GET', '/cart', ['App\Controllers\CartController', 'view']);
+    $r->addRoute('POST', '/cart/add/{id:\d+}', ['App\Controllers\CartController', 'add']); // Usually POST
+    $r->addRoute('GET', '/cart/add/{id:\d+}', ['App\Controllers\CartController', 'add']);  // Allow GET for simple links
+    $r->addRoute('GET', '/cart/remove/{id:\d+}', ['App\Controllers\CartController', 'remove']);
+    $r->addRoute('POST', '/checkout', ['App\Controllers\CartController', 'checkout']);
+
+    // ORDERS (History)
+    $r->addRoute('GET', '/orders', ['App\Controllers\OrderController', 'index']);
 });
 
 // 3. === DISPATCH THE REQUEST ===
@@ -99,31 +109,60 @@ $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 // 4. === HANDLE THE ROUTE ===
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
-        // Handle 404 Not Found error
         header("HTTP/1.0 404 Not Found");
-        echo '404 - Page Not Found';
-
+        $smarty->assign('pageTitle', 'Not Found');
+        $smarty->display('errors/404.tpl');
         break;
+
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-        $allowedMethods = $routeInfo[1];
-        // Handle 405 Method Not Allowed error
         header("HTTP/1.0 405 Method Not Allowed");
         echo '405 - Method Not Allowed';
         break;
-    case FastRoute\Dispatcher::FOUND:
-        $handler = $routeInfo[1]; // This is ['App\Controllers\ProductController', 'showAll']
-        $vars = $routeInfo[2];    // This contains route parameters, e.g., ['id' => '123']
 
-        // Create the controller and call the method, passing dependencies and URL parameters
+    case FastRoute\Dispatcher::FOUND:
+        $handler = $routeInfo[1]; 
+        $vars = $routeInfo[2];
+
         $controllerClass = $handler[0];
         $method = $handler[1];
 
-        // This is a simple example. A DI container makes this part automatic and cleaner.
-        $controller = new $controllerClass($pdo, $smarty);
+        // === MANUAL DEPENDENCY INJECTION ===
+        // This acts as a container to give each controller exactly what it needs
+        
+        $controller = null;
 
-        $controller->$method($vars);
+        if ($controllerClass === 'App\Controllers\CartController') {
+            // 1. Prepare dependencies for CartController
+            $prodModel = new \App\Models\ProductModel($pdo);
+            $ordModel = new \App\Models\OrderModel($pdo);
+            
+            // 2. Create the Service
+            $cartService = new \App\Services\CartService($prodModel, $ordModel, $pdo);
+            
+            // 3. Inject Service into Controller
+            $controller = new \App\Controllers\CartController($cartService, $smarty);
+
+        } elseif ($controllerClass === 'App\Controllers\ProductController') {
+            // Standard Controller (Legacy style)
+            $controller = new \App\Controllers\ProductController($pdo, $smarty);
+
+        } elseif ($controllerClass === 'App\Controllers\AuthController') {
+            $controller = new \App\Controllers\AuthController($pdo, $smarty);
+
+        } elseif ($controllerClass === 'App\Controllers\AdminController') {
+             $controller = new \App\Controllers\AdminController($pdo, $smarty);
+             
+        } elseif ($controllerClass === 'App\Controllers\OrderController') {
+             $controller = new \App\Controllers\OrderController($pdo, $smarty);
+        }
+
+        // Execute the method
+        if ($controller) {
+            $controller->$method($vars);
+        } else {
+            echo "Error: Controller not configured in index.php";
+        }
         break;
-
 }
 
 ?>
