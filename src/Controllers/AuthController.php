@@ -28,15 +28,33 @@ class AuthController {
 
     // Handles the login form submission
     public function handleLogin() {
-        $email = $_POST['email'] ?? '';
+        $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
+
+
+        #login validation check
+         if (empty($email) || empty($password)) {
+            $this->smarty->assign('error', 'Please enter both email and password.');
+            $this->showLoginForm();
+            return; // Stop execution
+        }
+
+        #email validation check
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->smarty->assign('error', 'Invalid email format.');
+
+            # keep email in form  mb
+            #$this->smarty->assign('old', ['email' => $email]);
+            $this->showLoginForm();
+            return;
+        }
 
         $userModel = new UserModel($this->pdo);
         $user = $userModel->findUserByEmail($email);
 
         // Verify user exists and the password is correct.
         if ($user && password_verify($password, $user['password_hash'])) {
-            // Login success! Store user info in the session.
+            // Login success - store user info in the session.
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['first_name'];
 
@@ -55,14 +73,50 @@ class AuthController {
 
     // Handles the registration form submission
     public function handleRegister() {
-        $email = $_POST['email'] ?? '';
+        $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
-        $firstName = $_POST['first_name'] ?? '';
+        $firstName = trim($_POST['first_name'] ?? '');
 
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!gonna add server-side validation here (e.g., check if fields are empty, if email is valid).
+   
+        
+
+        #validate required fields
+        if (empty($email) || empty($password) || empty($firstName)) {
+            $this->smarty->assign('error', 'All fields are required.');
+            $this->showRegisterForm();
+            return; // Exit early to prevent database queries
+        }
+
+        #validate name length
+         $nameLen = mb_strlen($firstName);
+        if ($nameLen < 4 || $nameLen > 50) {
+            $this->smarty->assign('error', 'First name must be between 4 and 50 characters.');
+            $this->showRegisterForm();
+            return;
+        }
+
+        #validate email format
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->smarty->assign('error', 'Please provide a valid email address.');
+            $this->showRegisterForm();
+            return;
+        }
+        
+        #validate email length
+        if (strlen($email) > 255) {
+            $this->smarty->assign('error', 'Email address is too long (maximum 255 characters).');
+            $this->showRegisterForm();
+            return;
+        }
+        
+        #validate password length
+        if (strlen($password) > 255) {
+            $this->smarty->assign('error', 'Password is too long (maximum 255 characters).');
+            $this->showRegisterForm();
+            return;
+        }
 
         $userModel = new UserModel($this->pdo);
-
         // Check if user already exists
         if ($userModel->findUserByEmail($email)) {
             $this->smarty->assign('error', 'A user with this email already exists.');
@@ -70,10 +124,16 @@ class AuthController {
             return;
         }
 
+       
+
         // Create the new user
         $success = $userModel->createUser($email, $password, $firstName);
         if ($success) {
             // Automatically log the user in after successful registration
+
+            $_POST['email'] = $email;
+            $_POST['password'] = $password;
+            
             $this->handleLogin();
         } else {
             $this->smarty->assign('error', 'An error occurred during registration. Please try again.');
