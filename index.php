@@ -18,33 +18,12 @@ $smarty = require_once __DIR__ . '/config/smarty.php';
 // Make session data available to ALL Smarty templates
 $smarty->assign('session', $_SESSION);
 
-//$page=$_GET['page'];
-
-//$requestUri = $_SERVER['REQUEST_URI'];
-////$basePath = '/mysyte'; // The subdirectory of your project
-//$route = ($requestUri);//str_replace($basePath, '', $requestUri);
-//
-//// A simple routing mechanism
-//switch ($route) {
-//    case '/':
-//    case '/index.php':
-//    case '/products':
-//        // Route to the product list page
-//        $controller = new ProductController($pdo, $smarty);
-//        $controller->showAll();
-//        break;
-//
-//    case 'about':
-//        // Route to an about page (you create an AboutController)
-//        echo "This is the About Us page."; // Placeholder
-//        break;
-//
-//    default:
-//        // Handle 404 Not Found
-//        http_response_code(404);
-//        echo "404 - Page Not Found";
-//        break;
-//}
+$cartItemCount = 0;
+if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+    // array_sum adds up all the values (quantities) in the cart array
+    $cartItemCount = array_sum($_SESSION['cart']);
+}
+$smarty->assign('cartItemCount', $cartItemCount);
 
 // 2. === ROUTE DEFINITIONS ===
 // Define all the "routes" or URLs your application will respond to.
@@ -143,7 +122,7 @@ switch ($routeInfo[0]) {
             $controller = new \App\Controllers\CartController($cartService, $smarty);
 
         } elseif ($controllerClass === 'App\Controllers\ProductController') {
-            // Standard Controller (Legacy style)
+            
             $controller = new \App\Controllers\ProductController($pdo, $smarty);
 
         } elseif ($controllerClass === 'App\Controllers\AuthController') {

@@ -21,3 +21,21 @@ ul li a:hover{
 #logreg{
     float: right;
 }
+.cart-link {
+    display: flex !important; /* Forces flexbox to align text and badge nicely */
+    align-items: center;      /* Vertically centers them */
+    gap: 6px;                 /* Adds a small gap between "Cart" and the badge */
+}
+
+.cart-badge {
+    background-color: #ff6633; /* Matches your accent color */
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 12px;       /* Creates a pill/circle shape */
+    min-width: 20px;
+    text-align: center;
+    line-height: 1.2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Gives it a slight 3D pop */
+}

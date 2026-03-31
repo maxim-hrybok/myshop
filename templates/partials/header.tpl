@@ -18,17 +18,38 @@
             <li><a href="/about">About Us</a></li>
 
                 {if isset($session.user_id)}
+                    <li id="logreg"><a href="/logout">Logout</a></li>
                     <li id="logreg"><a href="/">Welcome, {$session.user_name|escape}!</a></li>
-
+                    
                             {* Check if admin *}
                         {if isset($session.is_admin) && $session.is_admin == 1}
                             <li id="logreg"><a href="/admin" style="color: #ff6633;">Admin Panel</a></li>
                         {/if}
                     
-                    <li id="logreg"><a href="/logout">Logout</a></li>
+                    <li id="logreg">
+                        <a href="/cart" class="cart-link">
+                            Cart
+                            {if isset($cartItemCount) && $cartItemCount > 0}
+                                <span class="cart-badge">{$cartItemCount}</span>
+                            {/if}
+                        </a>
+                    </li>
+                    <li id="logreg"><a href="/orders">Orders</a></li>
+                    
+                    
                 {else}
                     <li id="logreg"><a href="/login">Login</a></li>
-                    <li id="logreg"> <a href="/register">Register</a></li>
+                    <li id="logreg"><a href="/register">Register</a></li>
+                    
+                    {* Guest users should also see the cart count *}
+                    <li id="logreg">
+                        <a href="/cart" class="cart-link">
+                            Cart
+                            {if isset($cartItemCount) && $cartItemCount > 0}
+                                <span class="cart-badge">{$cartItemCount}</span>
+                            {/if}
+                        </a>
+                    </li>
                 {/if}
 
         </ul>
