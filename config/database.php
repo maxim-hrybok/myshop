@@ -10,9 +10,16 @@ $user = $_ENV['DB_USER'];
 $pass = $_ENV['DB_PASS'];
 $charset = $_ENV['DB_CHARSET'];
 
+// 1. timezone in php for such functions as time() or date() now they will WORK in utc)
+date_default_timezone_set('UTC');
+
+
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=$charset", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // 2. Set timezone for SQL for functions like NOW() to match with PHP functions . // brute force protection relies on this consistency.
+    $pdo->exec("SET time_zone = '+00:00'");
 } catch (PDOException $e) {
     // On a live server, log the actual error to a file and show a friendly message.
     // For now, a generic message is much safer than showing the real error.

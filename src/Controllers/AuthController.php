@@ -31,6 +31,36 @@ class AuthController {
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
+        // 1. Get the user's IP Address
+        $ipAddress = $_SERVER['REMOTE_ADDR'];
+        $userModel = new UserModel($this->pdo);       
+
+        // 2. Brute force protection imp-
+        $attemptsData = $userModel->getLoginAttempts($ipAddress);
+        $maxAttempts = 3;
+        $lockoutMinutes = 5;
+
+        if ($attemptsData && $attemptsData['attempts'] >= $maxAttempts) {
+            // Calculate how much time has passed since their last failed attempt
+            $lastAttemptTime = strtotime($attemptsData['last_attempt']);
+            $timePassedSeconds = time() - $lastAttemptTime;
+            $lockoutSeconds = $lockoutMinutes * 60;
+            
+            if ($timePassedSeconds < $lockoutSeconds) {
+                //Calculate remaining time for a helpful UX.
+                $minutesLeft = ceil(($lockoutSeconds - $timePassedSeconds) / 60);
+                
+                // HTTP 429 REST standard for "Too Many Requests"
+                http_response_code(429);
+                $this->smarty->assign('error', "Too many failed attempts. Please try again in {$minutesLeft} minute(s).");
+                $this->showLoginForm();
+                return; // STOP execution 
+            } else {
+                // The 5 minutes  passed- clear record
+                $userModel->clearLoginAttempts($ipAddress);
+            }
+        }
+
 
         #login validation check
          if (empty($email) || empty($password)) {
@@ -54,7 +84,10 @@ class AuthController {
 
         // Verify user exists and the password is correct.
         if ($user && password_verify($password, $user['password_hash'])) {
-            // Login success - store user info in the session.
+            // Login success - store user info in the session +++ CLEAR FAILD ATTEMPTS.
+            $userModel->clearLoginAttempts($ipAddress);
+
+
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['first_name'];
 
@@ -65,6 +98,9 @@ class AuthController {
             header('Location: /');
             exit();
         } else {
+            // Record failed login attemts for brute force protection.
+            $userModel->recordFailedLogin($ipAddress);
+
             // Login failed. Show the login page again with an error.
             $this->smarty->assign('error', 'Invalid email or password.');
             $this->showLoginForm();
