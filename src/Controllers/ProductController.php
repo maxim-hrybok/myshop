@@ -1,50 +1,68 @@
 <?php
-//require_once __DIR__ . '/../Models/ProductModel.php';
+
 namespace App\Controllers;
 
 use App\Models\ProductModel;
-
-
+use App\Models\CategoryModel;
 use Smarty\Smarty;
+
 class ProductController {
-    private ProductModel $model; //
+    private ProductModel $model; 
+    private CategoryModel $categoryModel;
     private Smarty $smarty;
-    public function __construct(\PDO $pdo, $smarty) {
-        $this->model = new ProductModel($pdo);
-        $this->smarty = $smarty;//store smarty object
+
+    public function __construct(ProductModel $model, CategoryModel $categoryModel, Smarty $smarty) {
+        $this->model = $model;
+        $this->categoryModel = $categoryModel;
+        $this->smarty = $smarty;
     }
 
-    // method for show render view with smarty
     public function showAll() {
-        // 1. Get data from the model
-        $products = $this->model->getAllProducts();
-        // 2. "Assign" the data to Smarty. This makes the $products variable
-        //    available inside our Smarty template.
-        $this->smarty->assign("products", $products);
-        $this->smarty->assign("pageTitle", "All Steam Cards");//example for another variable
-        //include __DIR__ . '/../views/products/list.php';
-        $this->smarty->display('products/list.tpl');
+        // 1. Read state from URL (GET)
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $categoryIds = isset($_GET['categories']) && is_array($_GET['categories']) ? $_GET['categories'] :[];
+
+        // 2. Fetch data ('available' check)
+        $limit = 9; // 9 products per page looks for a grid
+        $result = $this->model->getFilteredProducts($page, $limit, $search, 'available', $categoryIds);
+        $allCategories = $this->categoryModel->getAllCategories();
+
+        // 3. Build a query string for pagination links (save search and category filters in the URL)
+        $queryParams =[
+            'search' => $search,
+            'categories' => $categoryIds
+        ];
+        $baseQuery = http_build_query($queryParams);
+
+        // 4. Give to Smarty
+        $this->smarty->assign("products", $result['products']);//the products for the current page
+        $this->smarty->assign("totalPages", $result['total_pages']);
+        $this->smarty->assign("currentPage", $result['current_page']);
+        $this->smarty->assign("baseQuery", $baseQuery);
+        
+        $this->smarty->assign("search", $search);
+        $this->smarty->assign("selectedCategories", $categoryIds);
+        $this->smarty->assign("allCategories", $allCategories);
+        $this->smarty->assign("pageTitle", "All Products");
+        
+        $this->smarty->display('products/list.tpl');//here the view
     }
+
     public function show(array $vars) {
-        // 1. Get a single product's data from the model using the ID.
         $id = (int)$vars["id"];
-        $product = $this->model->findProductById($id);
+        $product = $this->model->getProductWithCalculations($id);
 
-        // 2. Handle the "Not Found" case.
-
-        if (!$product) {
+        // prevent users from directly viewing inactive products via URL
+        if (!$product || $product['status'] !== 'available') {
             http_response_code(404);
-            // We can reuse Smarty to display a user-friendly error page.
             $this->smarty->assign('pageTitle', 'Product Not Found');
             $this->smarty->display('errors/404.tpl');
-            return; // Stop execution
+            return;
         }
 
-        // 3. "Assign" the data to Smarty.
         $this->smarty->assign("product", $product);
-        $this->smarty->assign("pageTitle", $product['name']); // Set the page title to the product's name
-
-        // 4. Display the new template for the product detail view.
+        $this->smarty->assign("pageTitle", $product['name']);
         $this->smarty->display('products/detail.tpl');
     }
 }
