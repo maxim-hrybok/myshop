@@ -25,13 +25,26 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table project.categories: ~3 rows (approximately)
+-- Dumping data for table project.categories: ~4 rows (approximately)
 INSERT INTO `categories` (`id`, `name`) VALUES
 	(1, 'Electronics'),
-	(2, 'Books'),
-	(3, 'Clothing');
+	(2, 'Books_2'),
+	(3, 'Clothing'),
+	(4, 'Dota2');
+
+-- Dumping structure for table project.login_attempts
+CREATE TABLE IF NOT EXISTS `login_attempts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ip_address` varchar(45) NOT NULL,
+  `attempts` int(11) NOT NULL DEFAULT 1,
+  `last_attempt` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ip_address` (`ip_address`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Dumping data for table project.login_attempts: ~0 rows (approximately)
 
 -- Dumping structure for table project.order_items
 CREATE TABLE IF NOT EXISTS `order_items` (
@@ -45,9 +58,9 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   KEY `product_id` (`product_id`),
   CONSTRAINT `1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
   CONSTRAINT `2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table project.order_items: ~17 rows (approximately)
+-- Dumping data for table project.order_items: ~24 rows (approximately)
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price_at_purchase`) VALUES
 	(1, 1, 1, 1, 440.10),
 	(2, 2, 1, 1, 440.10),
@@ -66,7 +79,13 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price_at
 	(15, 9, 4, 1, 12.50),
 	(16, 9, 2, 1, 854.53),
 	(17, 10, 1, 1, 440.10),
-	(18, 11, 1, 1, 440.10);
+	(18, 11, 1, 1, 440.10),
+	(19, 12, 4, 1, 12.50),
+	(20, 13, 2, 1, 854.53),
+	(21, 13, 1, 1, 440.10),
+	(22, 14, 4, 1, 12.50),
+	(23, 15, 6, 1, 173.16),
+	(24, 16, 13, 1, 3.84);
 
 -- Dumping structure for table project.orders
 CREATE TABLE IF NOT EXISTS `orders` (
@@ -78,9 +97,9 @@ CREATE TABLE IF NOT EXISTS `orders` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table project.orders: ~10 rows (approximately)
+-- Dumping data for table project.orders: ~16 rows (approximately)
 INSERT INTO `orders` (`id`, `user_id`, `total_price`, `status`, `created_at`) VALUES
 	(1, 2, 440.10, 'completed', '2026-03-03 20:40:46'),
 	(2, 2, 460.09, 'completed', '2026-03-03 20:40:57'),
@@ -92,7 +111,12 @@ INSERT INTO `orders` (`id`, `user_id`, `total_price`, `status`, `created_at`) VA
 	(8, 2, 440.10, 'completed', '2026-03-06 19:20:20'),
 	(9, 2, 1767.21, 'completed', '2026-03-06 19:21:18'),
 	(10, 2, 440.10, 'completed', '2026-03-06 19:38:45'),
-	(11, 2, 440.10, 'completed', '2026-03-19 10:25:34');
+	(11, 2, 440.10, 'completed', '2026-03-19 10:25:34'),
+	(12, 2, 12.50, 'completed', '2026-03-31 12:05:36'),
+	(13, 2, 1294.62, 'completed', '2026-04-03 11:59:15'),
+	(14, 2, 12.50, 'completed', '2026-04-07 12:16:11'),
+	(15, 2, 173.16, 'completed', '2026-04-07 12:23:18'),
+	(16, 2, 3.84, 'completed', '2026-04-07 12:28:42');
 
 -- Dumping structure for table project.product_category_map
 CREATE TABLE IF NOT EXISTS `product_category_map` (
@@ -104,12 +128,20 @@ CREATE TABLE IF NOT EXISTS `product_category_map` (
   CONSTRAINT `product_category_map_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table project.product_category_map: ~5 rows (approximately)
+-- Dumping data for table project.product_category_map: ~12 rows (approximately)
 INSERT INTO `product_category_map` (`product_id`, `category_id`) VALUES
 	(1, 1),
 	(2, 1),
 	(3, 3),
-	(4, 2);
+	(4, 2),
+	(6, 4),
+	(7, 4),
+	(8, 3),
+	(9, 2),
+	(10, 2),
+	(11, 2),
+	(12, 1),
+	(12, 2);
 
 -- Dumping structure for table project.products
 CREATE TABLE IF NOT EXISTS `products` (
@@ -122,15 +154,22 @@ CREATE TABLE IF NOT EXISTS `products` (
   `description` tinytext DEFAULT NULL,
   `stock` int(11) DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table project.products: ~5 rows (approximately)
+-- Dumping data for table project.products: ~12 rows (approximately)
 INSERT INTO `products` (`id`, `name`, `price`, `image_url`, `status`, `discount`, `description`, `stock`) VALUES
-	(1, 'Smartphonexx', 500.11, '/public/assets/img/steam.png', 'available', 12.00, 'yes ', 113),
-	(2, 'Laptop', 899.50, '/public/assets/img/steam.png', 'available', 5.00, 'asdfg', 118),
+	(1, 'Smartphonexx', 500.11, '/public/assets/img/steam.png', 'available', 12.00, 'yes ', 112),
+	(2, 'Laptop', 899.50, '/public/assets/img/steam.png', 'available', 5.00, 'asdfg', 117),
 	(3, 'T-shirt', 19.99, '/public/assets/img/steam.png', 'available', 0.00, 'asdfgh', 120),
-	(4, 'Novel Book', 12.50, '/public/assets/img/steam.png', 'available', 0.00, 'asdfghj', 21),
-	(6, 'BOBA', 222.00, '/public/assets/img/steam.png', 'available', 22.00, 'MEGA BOBA asdf', 0);
+	(4, 'Novel Book', 12.50, '/public/assets/img/steam.png', 'available', 0.00, 'asdfghj', 19),
+	(6, 'BOBA', 222.00, '/public/assets/img/steam.png', 'available', 22.00, 'MEGA BOBA asdf', 1),
+	(7, 'Dota 3 ', 22.00, '/public/assets/img/steam.png', 'available', 5.00, 'Yest spam productssss', 30),
+	(8, '2', 2.00, '/public/assets/img/steam.png', 'available', 2.00, '2', 2),
+	(9, '3', 3.00, '/public/assets/img/steam.png', 'available', 3.00, '3', 3),
+	(10, '4', 4.00, '/public/assets/img/steam.png', 'available', 4.00, '4', 4),
+	(11, '5', 5.00, '/public/assets/img/steam.png', 'available', 5.00, '5', 5),
+	(12, '6', 6.00, '/public/assets/img/steam.png', 'available', 6.00, '6', 6),
+	(13, 'to dich', 4.00, '/public/assets/img/steam.png', 'unavailable', 4.00, 'ydalil categoria', 3);
 
 -- Dumping structure for table project.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -142,12 +181,14 @@ CREATE TABLE IF NOT EXISTS `users` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table project.users: ~1 rows (approximately)
+-- Dumping data for table project.users: ~4 rows (approximately)
 INSERT INTO `users` (`id`, `email`, `password_hash`, `first_name`, `is_admin`, `created_at`) VALUES
 	(1, 'haker@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$WjJ2dmI1aUV5Vm1PRjV2bQ$LWSO9X2zFP7vD+S0IZwHwhMu692goTeIsw9agpqt4GI', 'caster', 0, '2026-02-24 11:51:43'),
-	(2, 'admin@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$eHJJZG5zLnRYdmVkYi93Sw$tKueDAb7TE7uHYJWps07IMJa5ZuBawN90xFM48x+BPo', 'adminka', 1, '2026-03-01 19:25:57');
+	(2, 'admin@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$eHJJZG5zLnRYdmVkYi93Sw$tKueDAb7TE7uHYJWps07IMJa5ZuBawN90xFM48x+BPo', 'adminka', 1, '2026-03-01 19:25:57'),
+	(3, 'admin@gmail.c', '$argon2id$v=19$m=65536,t=4,p=1$OVZKVGExbWxBdWpLOS5oVQ$fKGQ4fOzG/iHgYGiXo8OBTbRNHGL2Tz1pgoEG5km3gY', 'adminka2', 0, '2026-03-31 12:30:44'),
+	(4, 'admin@gmaa.a', '$argon2id$v=19$m=65536,t=4,p=1$T0J2MGl1QXR5Nkt0cXdEag$0BxDgJ6NNGARcF9A1yuvkRg1wOb4TbVvLTyP+sjqZVM', 'admin', 0, '2026-03-31 12:31:26');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

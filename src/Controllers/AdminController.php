@@ -4,11 +4,13 @@ namespace App\Controllers;
 
 use App\Models\ProductModel;
 use App\Models\CategoryModel;
+use App\Models\OrderModel;
 use Smarty\Smarty;
 
 class AdminController {
     private ProductModel $productModel;
     private CategoryModel $categoryModel;
+    private OrderModel $orderModel;
     private Smarty $smarty;
 
     public function __construct(\PDO $pdo, Smarty $smarty) {
@@ -21,6 +23,7 @@ class AdminController {
 
         $this->productModel = new ProductModel($pdo);
         $this->categoryModel = new CategoryModel($pdo);
+        $this->orderModel = new OrderModel($pdo);
         $this->smarty = $smarty;
     }
 
@@ -120,6 +123,53 @@ class AdminController {
         $id = (int)$vars['id'];
         $this->productModel->deleteProduct($id);
         header('Location: /admin');
+        exit();
+    }
+
+    public function showOrders(){
+        $orders = $this->orderModel->getAllOrders();
+
+        $this->smarty->assign('orders', $orders);
+        $this->smarty->assign('pageTitle', 'Manage Orders');
+        $this->smarty->display('admin/orders.tpl');
+    }
+
+    public function editOrder($vars) {
+        $id = (int)$vars['id'];
+        $order = $this->orderModel->getOrderById($id);
+
+        if (!$order) {
+            echo "Order not found.";
+            return;
+        }
+        $orderItems = $this->orderModel->getOrderItems($id);
+        
+        $this->smarty->assign('orderItems', $orderItems); 
+        $this->smarty->assign('order', $order);
+        $this->smarty->assign('pageTitle', 'Edit Order Status');
+        $this->smarty->display('admin/order_edit.tpl');
+    }
+
+    
+    public function updateOrderStatus($vars) {
+        $id = (int)$vars['id'];
+        // Validate input against allowed enum values
+        $validStatuses =['pending', 'completed', 'cancelled'];
+        $newStatus = $_POST['status'] ?? '';
+
+        if (in_array($newStatus, $validStatuses)) {
+            $this->orderModel->updateOrderStatus($id, $newStatus);
+        }
+        
+        header('Location: /admin/orders');
+        exit();
+    }   
+    
+    public function deleteOrder($vars){
+        $id = (int)$vars['id'];
+        $this->orderModel->deleteOrder($id);
+
+        header('Location: /admin/orders');
         exit();
     }
 }

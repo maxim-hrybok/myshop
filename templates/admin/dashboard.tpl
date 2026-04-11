@@ -3,6 +3,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h1>Admin Dashboard - Products</h1>
         <div>
+            <a href="/admin/orders" class="button-primary" style="background: #b82a17; padding: 10px 15px; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">Manage Orders</a>
             <a href="/admin/categories" class="button-primary" style="background: #17a2b8; padding: 10px 15px; color: white; text-decoration: none; border-radius: 5px; margin-right: 10px;">Manage Categories</a>
             <a href="/admin/create" class="button-primary" style="background: green; padding: 10px 15px; color: white; text-decoration: none; border-radius: 5px;">+ Add New Product</a>
         </div>

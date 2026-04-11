@@ -62,6 +62,12 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/cart/remove/{id:\d+}',['App\Controllers\CartController', 'remove']);
     $r->addRoute('POST', '/checkout',['App\Controllers\CartController', 'checkout']);
     $r->addRoute('GET', '/orders',['App\Controllers\OrderController', 'index']);
+
+   // Admin Order Routes
+    $r->addRoute('GET', '/admin/orders',['App\Controllers\AdminController', 'showOrders']);
+    $r->addRoute('GET', '/admin/orders/edit/{id:\d+}', ['App\Controllers\AdminController', 'editOrder']);
+    $r->addRoute('POST', '/admin/orders/update/{id:\d+}', ['App\Controllers\AdminController', 'updateOrderStatus']);
+    $r->addRoute('POST', '/admin/orders/delete/{id:\d+}',['App\Controllers\AdminController', 'deleteOrder']);
 });
 
 // === DISPATCH THE REQUEST ===
