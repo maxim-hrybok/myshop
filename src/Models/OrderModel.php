@@ -88,6 +88,64 @@ class OrderModel {
             $this->pdo->rollBack();
             return false; 
         }
-    }     
+    } 
+    /**
+     * Retrieves orders based on filters (status, search by order ID or user ID) and pagination.
+     */
+     public function getFilteredOrders(int $page = 1, int $limit = 10, string $status = 'all', string $search = ''): array {
+        // Validation for pagination
+        if ($page < 1) $page = 1;
+        if ($limit < 1) $limit = 10;
+        
+        $offset = ($page - 1) * $limit;
+        $params = [];
+        $whereClauses =[];
+
+        // 1. Filter by Status
+        if ($status !== 'all') {
+            $whereClauses[] = "status = ?";
+            $params[] = $status;
+        }
+
+        // 2. Filter by Search (Order ID or User ID)
+        if ($search !== '') {
+            // Because IDs are numbers, we search for exact matches or use simple logic
+            $whereClauses[] = "(id = ? OR user_id = ?)";
+            $params[] = (int)$search;
+            $params[] = (int)$search;
+        }
+
+        // Build the WHERE part of the SQL query
+        $whereSql = count($whereClauses) > 0 ? "WHERE " . implode(" AND ", $whereClauses) : "";
+
+        // First, count total items for pagination math
+        $countSql = "SELECT COUNT(id) FROM orders $whereSql";
+        $stmtCount = $this->pdo->prepare($countSql);
+        $stmtCount->execute($params);
+        $totalItems = (int)$stmtCount->fetchColumn();
+        $totalPages = ceil($totalItems / $limit);
+
+        // Second, fetch the actual paginated data, preserving the smart sorting
+        $sql = "SELECT * FROM orders $whereSql 
+                ORDER BY 
+                    CASE status
+                        WHEN 'pending' THEN 1
+                        WHEN 'completed' THEN 2
+                        WHEN 'cancelled' THEN 3
+                    END, 
+                    created_at DESC 
+                LIMIT $limit OFFSET $offset";
+                
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+        $orders = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        return[
+            'orders' => $orders,
+            'total_items' => $totalItems,
+            'total_pages' => $totalPages,
+            'current_page' => $page
+        ];
+    }    
 }
 ?>

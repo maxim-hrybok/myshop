@@ -127,11 +127,37 @@ class AdminController {
     }
 
     public function showOrders(){
-        $orders = $this->orderModel->getAllOrders();
+        //read data from URL
+        $page = isset($_GET['page'] ) ? (int)$_GET['page'] : 1; 
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';//$search = trim($_GET['search'] ?? ''); ваниант
+        $status = isset($_GET['status']) ? $_GET['status'] : 'all';
 
-        $this->smarty->assign('orders', $orders);
+        //Fetch paginated and filtered data
+        $result = $this->orderModel->getFilteredOrders($page, 10, $status, $search);
+
+        //build query string  for pagination and search links
+
+        $queryParams = [
+            'search' => $search,
+            'status' => $status
+        ];
+
+        $queryString = http_build_query($queryParams);
+
+        // give data to Smarty
+        $this->smarty->assign('orders', $result['orders']);
+        $this->smarty->assign('totalPages', $result['total_pages']);
+        $this->smarty->assign('currentPage', $result['current_page']);
+        $this->smarty->assign('queryString', $queryString); 
+        
+        // pass current filter values back to the view so the form remembers user's choice
+        $this->smarty->assign('search', $search);
+        $this->smarty->assign('status', $status);
+
         $this->smarty->assign('pageTitle', 'Manage Orders');
         $this->smarty->display('admin/orders.tpl');
+    
+
     }
 
     public function editOrder($vars) {
