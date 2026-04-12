@@ -15,7 +15,7 @@
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/products">All Products</a></li>
-            <li><a href="/public/assets/info/changelog.pdf" target="_blank">Changelog</a></li>
+            <li><a href="/public/assets/info/changelog.pdf?v=2" target="_blank">Changelog</a></li>
             <li><a href="/about">About Us</a></li>
 
                 {if isset($session.user_id)}

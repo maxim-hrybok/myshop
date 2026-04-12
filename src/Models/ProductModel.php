@@ -21,69 +21,95 @@ class ProductModel {
          /**
           * Retrieves products based on various filters such as pagination, search term, status, and category IDs.
           */       
-    public function getFilteredProducts(int $page = 1, int $limit = 10, string $search = '', string $status = 'all', array $categoryIds =[]): array {
-        // Validation for negative or zero pages
-        if ($page < 1) $page = 1;
-        if ($limit < 1) $limit = 10;
-        
-        // SELECT * FROM products WHERE status = 'available' AND name LIKE '%phone%' AND category_id IN (1, 2) sql that it Can make after all..
-        $offset = ($page - 1) * $limit;
-        $params = [];
-        $whereClauses =[];//["p.status = ?", "p.name LIKE ?", "pcm.category_id IN (?, ?)"]
-        $joinClause = "";
+public function getFilteredProducts(int $page = 1, int $limit = 10, string $search = '', string $status = 'all', array $categoryIds = []): array {
+    // --- Input sanitization ---
+    if ($page < 1) $page = 1;
+    if ($limit < 1) $limit = 10;
 
-        // 1. Filter by Status
-        if ($status !== 'all') {
-            $whereClauses[] = "p.status = ?";
-            $params[] = $status;
-        }
+    $offset = ($page - 1) * $limit;
+    $params = [];
+    $whereClauses = [];
 
-        // 2. Filter by Search string
-        if ($search !== '') {
-            $whereClauses[] = "p.name LIKE ?";
-            $params[] = "%$search%";
-        }
+    // Separation the special "uncategorized" (0) from real ids
+    // e.g. [0, 3, 5] → $wantsUncategorized = true, $realIds = [3, 5]
+    $wantsUncategorized = in_array('0', $categoryIds) || in_array(0, $categoryIds);
+    $realCategoryIds    = array_filter($categoryIds, fn($id) => (int)$id !== 0);
 
-        // 3. Filter by Categories (Many-to-Many logic)
-        if (!empty($categoryIds)) {
-            // Create placeholders exactly matching the number of IDs: "?, ?, ?"
-            $inQuery = implode(',', array_fill(0, count($categoryIds), '?'));
-            $joinClause = "JOIN product_category_map pcm ON p.id = pcm.product_id";
-            $whereClauses[] = "pcm.category_id IN ($inQuery)";
-            foreach ($categoryIds as $catId) {
+    // -----------------------------------------------------------------------
+    //  • No category filter at all  → no JOIN needed
+    //  • Only real IDs [1,2]        → INNER JOIN  (only products IN those categories)
+    //  • Only uncategorized [0]     → LEFT JOIN   (we need NULLs to find orphans)
+    //  • Mixed [0,1,2]              → LEFT JOIN   (need both orphans and matched rows)
+    // -----------------------------------------------------------------------
+    if (!empty($categoryIds)) {
+
+        $joinClause = "LEFT JOIN product_category_map pcm ON p.id = pcm.product_id";
+
+        $categoryConditions = []; // will be OR-ed together inside one AND block
+
+        // Real category IDs → standard IN() check
+        if (!empty($realCategoryIds)) {
+            $placeholders = implode(',', array_fill(0, count($realCategoryIds), '?'));
+            $categoryConditions[] = "pcm.category_id IN ($placeholders)";
+            foreach ($realCategoryIds as $catId) {
                 $params[] = (int)$catId;
             }
         }
 
-        $whereSql = count($whereClauses) > 0 ? "WHERE " . implode(" AND ", $whereClauses) : ""; //WHERE p.status = ? AND p.name LIKE ? AND p.category_id IN (?, ?)
-
-        // First, count total items for pagination math
-        $countSql = "SELECT COUNT(DISTINCT p.id) as total FROM products p $joinClause $whereSql";
-        $stmtCount = $this->pdo->prepare($countSql);
-        $stmtCount->execute($params);
-        $totalItems = (int)$stmtCount->fetchColumn();
-        $totalPages = ceil($totalItems / $limit);
-
-        // Second, fetch the actual data
-        $sql = "SELECT DISTINCT p.* FROM products p $joinClause $whereSql ORDER BY p.id DESC LIMIT $limit OFFSET $offset";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($params);
-        $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        // Fetch categories for each product to display in the list
-        foreach ($products as &$product) {
-            $product['categories'] = $this->getProductCategories($product['id']);
+        // "Uncategorized" → product has NO row in product_category_map at all
+        if ($wantsUncategorized) {
+            $categoryConditions[] = "pcm.product_id IS NULL";
         }
 
-        
+        // Combine (pcm.category_id IN (1,2) OR pcm.product_id IS NULL)
+        $whereClauses[] = '(' . implode(' OR ', $categoryConditions) . ')';
 
-        return[
-            'products' => $products,
-            'total_items' => $totalItems,
-            'total_pages' => $totalPages,
-            'current_page' => $page
-        ];
+    } else {
+        $joinClause = ""; // no category filter → no join needed
     }
+
+   
+    // filters (status, search) 
+    
+    if ($status !== 'all') {
+        $whereClauses[] = "p.status = ?";
+        $params[] = $status;
+    }
+
+    if ($search !== '') {
+        $whereClauses[] = "p.name LIKE ?";
+        $params[] = "%$search%";
+    }
+
+    $whereSql = count($whereClauses) > 0
+        ? "WHERE " . implode(" AND ", $whereClauses)
+        : "";
+
+
+    //  Count total (for pagination) then fetch the page
+    
+    $countSql = "SELECT COUNT(DISTINCT p.id) as total FROM products p $joinClause $whereSql";
+    $stmtCount = $this->pdo->prepare($countSql);
+    $stmtCount->execute($params);
+    $totalItems = (int)$stmtCount->fetchColumn();
+    $totalPages  = (int)ceil($totalItems / $limit);
+
+    $sql = "SELECT DISTINCT p.* FROM products p $joinClause $whereSql ORDER BY p.id DESC LIMIT $limit OFFSET $offset";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($params);
+    $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+    // Attach categories to each product for display
+    foreach ($products as &$product) {
+        $product['categories'] = $this->getProductCategories($product['id']);
+    }
+
+    return [
+        'products'     => $products,
+        'total_pages'  => $totalPages,
+        'current_page' => $page,
+    ];
+}
          /**
           * finds a single product by its ID and returns it as an associative array, or null if not found.
           */

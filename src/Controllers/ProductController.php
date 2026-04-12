@@ -28,6 +28,8 @@ class ProductController {
         $result = $this->model->getFilteredProducts($page, $limit, $search, 'available', $categoryIds);
         $allCategories = $this->categoryModel->getAllCategories();
 
+        array_unshift($allCategories, ['id' => '0', 'name' => 'None']);// Add a default option for uncategorized products
+
         // 3. Build a query string for pagination links (save search and category filters in the URL)
         $queryParams =[
             'search' => $search,

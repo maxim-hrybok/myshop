@@ -38,6 +38,9 @@ class AdminController {
         $result = $this->productModel->getFilteredProducts($page, 10, $search, $status, $categoryIds);
         $allCategories = $this->categoryModel->getAllCategories();
 
+        array_unshift($allCategories,['id' => '0', 'name' => 'None']);// Add a default option for uncategorized products
+
+
         // Build the URL query string in the Controller to ensure proper encoding and security
         $queryParams =[
             'search' => $search,
