@@ -4,8 +4,6 @@ A full-stack e-commerce web application built from the ground up using modern PH
 
 **Live Demo:** [**https://somesite.ct.ws/**](https://somesite.ct.ws/)
 
-![Admin Dashboard Screenshot](https://imgur.com/a/Y0NGJat)
-
 ---
 
 ## Key Features
