@@ -18,7 +18,11 @@
                 {foreach $order.items as $item}
                 <tr>
                     <td style="width: 50px;">
-                        <img src="{$item.image_url|default:''}" width="40" style="vertical-align: middle;">
+                        {if $item.image_url|strpos:'/' === 0}
+                            <img src="{$item.image_url|escape}" width="40" style="vertical-align: middle; border-radius: 4px;">
+                        {else}
+                            <img src="/public/uploads/products/thumb_{$item.image_url|escape}" width="40" style="vertical-align: middle; border-radius: 4px;">
+                        {/if}
                     </td>
                     <td>{$item.name|escape}</td>
                     <td>x {$item.quantity}</td>

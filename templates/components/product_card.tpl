@@ -3,7 +3,11 @@
     <div class="card__top">
         <a href="/product/{$product.id}" class="card__image">
             {* Use the 'escape' modifier for security, just like htmlspecialchars() *}
-            <img src="{$product.image_url|escape}" alt="{$product.name|escape}">
+            {if $product.image_url|strpos:'/' === 0}
+                <img src="{$product.image_url|escape}" alt="{$product.name|escape}">
+            {else}
+                <img src="/public/uploads/products/thumb_{$product.image_url|escape}" alt="{$product.name|escape}">
+            {/if}
         </a>
 
         {* Smarty's if-statement syntax *}

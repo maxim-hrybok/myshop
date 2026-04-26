@@ -74,14 +74,15 @@ class CartService {
             $orderId = $this->orderModel->createOrder($userId, $cartData['total']);
 
             foreach ($cartData['items'] as $item) {
-                // Double check stock inside transaction
-                $currentStock = $this->productModel->getStock($item['id']);
-                if ($currentStock < $item['qty']) {
-                    throw new \Exception("Product {$item['name']} is out of stock.");
-                }
+            // Attempt to decrease stock atomically FIRST. If it fails, another user bought the last item.
+            $stockDecreased = $this->productModel->decreaseStock($item['id'], $item['qty']);
+            
+            if (!$stockDecreased) {
+                throw new \Exception("Product '{$item['name']}' is out of stock or insufficient quantity available.");
+            }
 
-                $this->orderModel->addOrderItem($orderId, $item['id'], $item['qty'], $item['price']);
-                $this->productModel->decreaseStock($item['id'], $item['qty']);
+            // If stock decreased successfully, log the order item.
+            $this->orderModel->addOrderItem($orderId, $item['id'], $item['qty'], $item['price']);
             }
 
             $this->pdo->commit();

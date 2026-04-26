@@ -5,7 +5,11 @@
     {if isset($product)}
     <article class="product-detail">
         <div class="product-detail__image-wrapper">
-            <img src="{$product.image_url|escape}" alt="{$product.name|escape}">
+            {if $product.image_url|strpos:'/' === 0}
+                <img src="{$product.image_url|escape}" alt="{$product.name|escape}">
+            {else}
+                <img src="/public/uploads/products/large_{$product.image_url|escape}" alt="{$product.name|escape}">
+            {/if}
         </div>
 
         <div class="product-detail__info">

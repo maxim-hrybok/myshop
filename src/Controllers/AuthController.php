@@ -27,10 +27,16 @@ class AuthController {
     }
 
     // Handles the login form submission
-    public function handleLogin() {
+    public function handleLogin($skipCaptcha = false) {
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
+        // 0. Verify reCAPTCHA first (if not skipped)
+        if ($skipCaptcha !== true && !$this->verifyRecaptcha()) {
+            $this->smarty->assign('error', 'Please complete the CAPTCHA verification.');
+            $this->showLoginForm();
+            return;
+        }
         // 1. Get the user's IP Address
         $ipAddress = $_SERVER['REMOTE_ADDR'];
         $userModel = new UserModel($this->pdo);       
@@ -113,6 +119,12 @@ class AuthController {
         $password = $_POST['password'] ?? '';
         $firstName = trim($_POST['first_name'] ?? '');
 
+        // 0. Verify reCAPTCHA first
+        if (!$this->verifyRecaptcha()) {
+            $this->smarty->assign('error', 'Please complete the CAPTCHA verification.');
+            $this->showRegisterForm();
+            return;
+        }
    
         
 
@@ -169,8 +181,10 @@ class AuthController {
 
             $_POST['email'] = $email;
             $_POST['password'] = $password;
-            
-            $this->handleLogin();
+
+            // Pass `true` to skip the CAPTCHA check, since the token was already consumed!
+            $this->handleLogin(true); 
+
         } else {
             $this->smarty->assign('error', 'An error occurred during registration. Please try again.');
             $this->showRegisterForm();
@@ -178,9 +192,66 @@ class AuthController {
     }
 
     // Logs the user out
-    public function logout() {
-        session_destroy();
-        header('Location: /');
-        exit();
+/**
+     * Verifies the Google reCAPTCHA response using cURL (Enterprise Standard)
+     * Includes Graceful Degradation to file_get_contents for Windows localhost environments.
+     * 
+     * @return bool True if validated, False if spam/failed.
+     */
+    private function verifyRecaptcha(): bool {
+        $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
+        if (empty($recaptchaResponse)) {
+            return false;
+        }
+
+        $secret = $_ENV['RECAPTCHA_SECRET_KEY'] ?? '';
+        $verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
+        $postData = http_build_query([
+            'secret' => $secret,
+            'response' => $recaptchaResponse
+        ]);
+
+        $response = false;
+
+        // Enterprise Pattern: Graceful Degradation
+        // If the server has cURL installed, use the strict enterprise method.
+        if (function_exists('curl_init')) {
+            $ch = \curl_init();
+            \curl_setopt($ch, CURLOPT_URL, $verifyUrl);
+            \curl_setopt($ch, CURLOPT_POST, 1);
+            \curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
+            \curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
+            
+            // Bypass strict local SSL certificate checks for localhost development
+            if (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') {
+                \curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            }
+            
+            $response = \curl_exec($ch);
+            \curl_close($ch);
+            
+        } else {
+            // (Solved Windows missing DLL issues)
+            $options = [
+                'http' =>[
+                    'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                    'method'  => 'POST',
+                    'content' => $postData
+                ],
+                'ssl' =>[
+                    'verify_peer' => (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') ? false : true,
+                    'verify_peer_name' => (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') ? false : true,
+                ]
+            ];
+            $context  = stream_context_create($options);
+            $response = @file_get_contents($verifyUrl, false, $context);
+        }
+        
+        if (!$response) {
+            return false; // Fail securely if Google API is unreachable
+        }
+
+        $responseData = json_decode($response);
+        return isset($responseData->success) && $responseData->success === true;
     }
 }

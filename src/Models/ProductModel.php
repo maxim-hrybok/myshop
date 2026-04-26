@@ -81,13 +81,8 @@ public function getFilteredProducts(int $page = 1, int $limit = 10, string $sear
         $params[] = "%$search%";
     }
 
-    $whereSql = count($whereClauses) > 0
-        ? "WHERE " . implode(" AND ", $whereClauses)
-        : "";
-
-
+    $whereSql = count($whereClauses) > 0 ? "WHERE " . implode(" AND ", $whereClauses) : "";
     //  Count total (for pagination) then fetch the page
-    
     $countSql = "SELECT COUNT(DISTINCT p.id) as total FROM products p $joinClause $whereSql";
     $stmtCount = $this->pdo->prepare($countSql);
     $stmtCount->execute($params);
@@ -99,12 +94,39 @@ public function getFilteredProducts(int $page = 1, int $limit = 10, string $sear
     $stmt->execute($params);
     $products = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-    // Attach categories to each product for display
-    foreach ($products as &$product) {
-        $product['categories'] = $this->getProductCategories($product['id']);
+    if (empty($products)) {
+        return [
+            'products'     => [],
+            'total_pages'  => $totalPages,
+            'current_page' => $page,
+        ];
     }
 
-    return [
+    // --- EAGER LOADING CATEGORIES (The Fix) ---
+    $productIds = array_column($products, 'id');
+    $inQuery = implode(',', array_fill(0, count($productIds), '?'));
+    
+    $catSql = "SELECT pcm.product_id, c.id, c.name 
+               FROM categories c 
+               JOIN product_category_map pcm ON c.id = pcm.category_id 
+               WHERE pcm.product_id IN ($inQuery)";
+    $catStmt = $this->pdo->prepare($catSql);
+    $catStmt->execute($productIds);
+    $categoryRows = $catStmt->fetchAll(\PDO::FETCH_ASSOC);
+
+    $categoriesByProduct =[];
+    foreach ($categoryRows as $row) {
+        $categoriesByProduct[$row['product_id']][] = [
+            'id' => $row['id'],
+            'name' => $row['name']
+        ];
+    }
+
+    foreach ($products as &$product) {
+        $product['categories'] = $categoriesByProduct[$product['id']] ?? [];
+    }
+
+    return[
         'products'     => $products,
         'total_pages'  => $totalPages,
         'current_page' => $page,
@@ -204,8 +226,10 @@ public function getFilteredProducts(int $page = 1, int $limit = 10, string $sear
 
     public function decreaseStock(int $id, int $quantity): bool {
         $stmt = $this->pdo->prepare("UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?");
-        return $stmt->execute([$quantity, $id, $quantity]);
-    }
+        $stmt->execute([$quantity, $id, $quantity]);
+    // Must check rowCount to ensure the atomic condition (stock >= ?) was met
+        return $stmt->rowCount() > 0;
+}
 
     public function getProductWithCalculations(int $id): ?array {
         $product = $this->findProductById($id);

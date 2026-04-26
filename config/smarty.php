@@ -21,5 +21,11 @@ $smarty->setCacheDir(__DIR__ . '/../cache');
 // Turn this off in a production environment for better performance.
 $smarty->force_compile = false;
 
+// Whitelist and safely wrap the PHP 'strpos' function for template use.
+// We wrap it in a closure to prevent PHP 8.1+ deprecation warnings if $haystack is null.
+$smarty->registerPlugin('modifier', 'strpos', function($haystack, $needle) {
+    return is_string($haystack) ? strpos($haystack, $needle) : false;
+});
+
 // Return the fully configured object so it can be used elsewhere.
 return $smarty;

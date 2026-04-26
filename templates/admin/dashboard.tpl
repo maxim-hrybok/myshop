@@ -51,7 +51,13 @@
             {foreach $products as $p}
             <tr>
                 <td>{$p.id}</td>
-                <td><img src="{$p.image_url|default:'#'}" width="50"></td>
+                <td>
+                    {if $p.image_url|strpos:'/' === 0}
+                        <img src="{$p.image_url|escape}" width="50" style="border-radius: 4px;">
+                    {else}
+                        <img src="/public/uploads/products/thumb_{$p.image_url|escape}" width="50" style="border-radius: 4px;">
+                    {/if}
+                </td>
                 <td>{$p.name|escape}</td>
                 <td>
                     {* FIX: Replaced count() with !empty() for Smarty 5 safety *}

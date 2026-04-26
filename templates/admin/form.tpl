@@ -2,8 +2,20 @@
 <main style="padding: 20px; max-width: 800px; margin: 0 auto; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-radius: 8px; margin-top: 2rem;">
     <h1>{if isset($product)}Edit Product{else}Add New Product{/if}</h1>
 
-<form action="{if isset($product)}/admin/update/{$product.id}{else}/admin/store{/if}" method="POST">
+    {if isset($error)}
+        <div style="background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+            {$error}
+        </div>
+    {/if}
+
+<!-- CRITICAL: enctype="multipart/form-data" is required for file uploads -->
+<form action="{if isset($product)}/admin/update/{$product.id}{else}/admin/store{/if}" method="POST" enctype="multipart/form-data">
     
+    <!-- Retain existing image if editing -->
+    {if isset($product)}
+        <input type="hidden" name="existing_image_url" value="{$product.image_url|escape}">
+    {/if}
+
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
         <!-- Left Column -->
         <div>
@@ -54,8 +66,19 @@
             </div>
 
             <div class="form-group" style="margin-bottom: 15px;">
-                <label style="font-weight: bold;">Image URL:</label>
-                <input type="text" name="image_url" value="{$product.image_url|default:''}" placeholder="/public/assets/img/steam.png" style="width: 100%; padding: 8px;">
+                <label style="font-weight: bold;">Product Image:</label>
+                {if isset($product) && $product.image_url}
+                    <div style="margin-bottom: 10px;">
+                        <span style="font-size: 0.8rem; color: #666;">Current Image:</span><br>
+                        {if $product.image_url|strpos:'/' === 0}
+                            <img src="{$product.image_url|escape}" width="100" style="border: 1px solid #ccc; border-radius: 4px;">
+                        {else}
+                            <img src="/public/uploads/products/thumb_{$product.image_url|escape}" width="100" style="border: 1px solid #ccc; border-radius: 4px;">
+                        {/if}
+                    </div>
+                {/if}
+                <input type="file" name="image" accept="image/jpeg, image/png, image/webp" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                <small style="color: #666;">Leave empty to keep existing image. Max 5MB (JPG, PNG, WebP).</small>
             </div>
         </div>
     </div>

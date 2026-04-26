@@ -1,30 +1,35 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-//phpinfo();
-
 session_start();
 
+require_once __DIR__ . '/vendor/autoload.php';
 
-require_once __DIR__ . '/vendor/autoload.php';//+
+// 1. Load Environment Variables First
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
-//use App\Controllers\ProductController;//+
+// 2. Configure Error Reporting securely based on environment
+if (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') {
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+} else {
+    ini_set('display_errors', 0);
+    error_reporting(0);
+}
 
-// 1. Connect to the database. and samarty (config)
+// 3. Connect to the database and smarty (config)
 require_once __DIR__ . '/config/database.php';
 $smarty = require_once __DIR__ . '/config/smarty.php';
-
 
 // Make session data available to ALL Smarty templates
 $smarty->assign('session', $_SESSION);
 
 $cartItemCount = 0;
 if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
-    // array_sum adds up all the values (quantities) in the cart array
     $cartItemCount = array_sum($_SESSION['cart']);
 }
 $smarty->assign('cartItemCount', $cartItemCount);//#########################################################################saved part 
-
+// Pass public reCAPTCHA key to frontend
+$smarty->assign('recaptcha_site_key', $_ENV['RECAPTCHA_SITE_KEY'] ?? '');
 // 2. === ROUTE DEFINITIONS ===
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     // Public Products
