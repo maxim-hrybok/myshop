@@ -192,6 +192,11 @@ class AuthController {
     }
 
     // Logs the user out
+        public function logout() {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
 /**
      * Verifies the Google reCAPTCHA response using cURL (Enterprise Standard)
      * Includes Graceful Degradation to file_get_contents for Windows localhost environments.
