@@ -30,7 +30,7 @@
                 {/if}
             </div>
             {if $product.stock > 0}
-                <div style="color: green; font-weight: bold; margin-bottom: 10px;">
+                <div class="text-success" style="margin-bottom: 10px;">
                     In Stock: {$product.stock}
                 </div>
              <!-- Link or Form to Add to Cart -->
@@ -38,10 +38,10 @@
                     <button type="submit" class="product-detail__add-to-cart">Add to Cart</button>
                 </form>
             {else}
-                <div style="color: red; font-weight: bold; margin-bottom: 10px; font-size: 1.2rem;">
+                <div class="text-danger" style="margin-bottom: 10px; font-size: 1.2rem;">
                     OUT OF STOCK
                 </div>
-                <button class="product-detail__add-to-cart" disabled style="background: #ccc; cursor: not-allowed;">Sold Out</button>
+                <button class="product-detail__add-to-cart btn-disabled">Sold Out</button>
             {/if}
         </div>
     </article>

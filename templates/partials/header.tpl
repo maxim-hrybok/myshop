@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/public/assets/css/header.css"/>
     <link rel="stylesheet" href="/public/assets/css/card.css">
     <link rel="stylesheet" href="/public/assets/css/product-detail.css">
+    <link rel="stylesheet" href="/public/assets/css/layout.css">
 </head>
 <body>
 <header>
@@ -22,9 +23,9 @@
                     <li id="logreg"><a href="/logout">Logout</a></li>
                     <li id="logreg"><a href="/">Welcome, {$session.user_name|escape}!</a></li>
                     
-                            {* Check if admin *}
+                        {* Check if admin *}
                         {if isset($session.is_admin) && $session.is_admin == 1}
-                            <li id="logreg"><a href="/admin" style="color: #ff6633;">Admin Panel</a></li>
+                            <li id="logreg"><a href="/admin" class="text-warning">Admin Panel</a></li>
                         {/if}
                     
                     <li id="logreg">

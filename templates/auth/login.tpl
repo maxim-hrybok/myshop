@@ -21,7 +21,7 @@
 
         <div class="g-recaptcha" data-sitekey="{$recaptcha_site_key}" style="margin-bottom: 15px;"></div>
         
-        <button type="submit" class="button-primary">Login</button>
+        <button type="submit" class="btn-primary">Login</button>
     </form>
     <p>Don't have an account? <a href="/register">Register here</a></p>
 </main>

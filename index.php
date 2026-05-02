@@ -20,6 +20,14 @@ if (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') {
 require_once __DIR__ . '/config/database.php';
 $smarty = require_once __DIR__ . '/config/smarty.php';
 
+
+$containerBuilder = new \DI\ContainerBuilder();
+$containerBuilder->addDefinitions(__DIR__ . '/config/dependencies.php');
+$container = $containerBuilder->build();
+
+$smarty = $container->get(\Smarty\Smarty::class);// ------------------------------------------------------------------------
+
+
 // Make session data available to ALL Smarty templates
 $smarty->assign('session', $_SESSION);
 
@@ -105,38 +113,47 @@ switch ($routeInfo[0]) {
 
         $controllerClass = $handler[0];
         $method = $handler[1];
-        $controller = null;
 
-        if ($controllerClass === 'App\Controllers\CartController') {
-            $prodModel = new \App\Models\ProductModel($pdo);
-            $ordModel = new \App\Models\OrderModel($pdo);
-            $cartService = new \App\Services\CartService($prodModel, $ordModel, $pdo);
-            $controller = new \App\Controllers\CartController($cartService, $smarty);
+        // $controller = null;
 
-        } elseif ($controllerClass === 'App\Controllers\ProductController') {
-            $prodModel = new \App\Models\ProductModel($pdo);
-            $catModel = new \App\Models\CategoryModel($pdo);
-            $controller = new \App\Controllers\ProductController($prodModel, $catModel, $smarty);
+        // if ($controllerClass === 'App\Controllers\CartController') {
+        //     $prodModel = new \App\Models\ProductModel($pdo);
+        //     $ordModel = new \App\Models\OrderModel($pdo);
+        //     $cartService = new \App\Services\CartService($prodModel, $ordModel, $pdo);
+        //     $controller = new \App\Controllers\CartController($cartService, $smarty);
 
-        } elseif ($controllerClass === 'App\Controllers\AuthController') {
-            $controller = new \App\Controllers\AuthController($pdo, $smarty);
+        // } elseif ($controllerClass === 'App\Controllers\ProductController') {
+        //     $prodModel = new \App\Models\ProductModel($pdo);
+        //     $catModel = new \App\Models\CategoryModel($pdo);
+        //     $controller = new \App\Controllers\ProductController($prodModel, $catModel, $smarty);
 
-        } elseif ($controllerClass === 'App\Controllers\AdminController') {
-             $controller = new \App\Controllers\AdminController($pdo, $smarty);
+        // } elseif ($controllerClass === 'App\Controllers\AuthController') {
+        //     $controller = new \App\Controllers\AuthController($pdo, $smarty);
 
-        } elseif ($controllerClass === 'App\Controllers\CategoryController') {
-             $controller = new \App\Controllers\CategoryController($pdo, $smarty);
+        // } elseif ($controllerClass === 'App\Controllers\AdminController') {
+        //      $controller = new \App\Controllers\AdminController($pdo, $smarty);
+
+        // } elseif ($controllerClass === 'App\Controllers\CategoryController') {
+        //      $controller = new \App\Controllers\CategoryController($pdo, $smarty);
              
-        } elseif ($controllerClass === 'App\Controllers\OrderController') {
-             $controller = new \App\Controllers\OrderController($pdo, $smarty);
-        }
+        // } elseif ($controllerClass === 'App\Controllers\OrderController') {
+        //      $controller = new \App\Controllers\OrderController($pdo, $smarty);
+        // }
 
-        if ($controller) {
-            $controller->$method($vars);
-        } else {
-            echo "Error: Controller not configured in index.php";
-        }
+        // if ($controller) {
+        //     $controller->$method($vars);
+        // } else {
+        //     echo "Error: Controller not configured in index.php";
+        // }
+        // break;
+
+        // --- PHP-DI AUTOWIRING  ---
+        // PHP-DI reads the constructor of $controllerClass, sees it needs PDO and Smarty (or a Service),
+        // and automatically builds the entire dependency tree. No manual instantiation required
+        $controller = $container->get($controllerClass);
+        $controller->$method($vars);
         break;
+
 }
 ?>
 

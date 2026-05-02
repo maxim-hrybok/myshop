@@ -1,24 +1,21 @@
 {include file='partials/header.tpl'}
-<main style="padding: 20px; max-width: 800px; margin: 0 auto;">
+<main class="admin-main">
     
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div class="admin-header">
         <h1>Edit Order #{$order.id}</h1>
-        <a href="/admin/orders" class="button-primary" style="background: #6c757d; padding: 10px; color: white; text-decoration: none; border-radius: 5px;">&larr; Back to Orders</a>
+        <a href="/admin/orders" class="btn-secondary">&larr; Back to Orders</a>
     </div>
     
     <!-- 1. Order Meta Information -->
-    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px; display: flex; justify-content: space-between;">
+    <div class="admin-panel">
         <div>
             <p style="margin: 0 0 10px 0;"><strong>Customer User ID:</strong> {$order.user_id}</p>
             <p style="margin: 0;"><strong>Date:</strong> {$order.created_at}</p>
         </div>
         <div style="text-align: right;">
-            <p style="margin: 0 0 10px 0; font-size: 1.2rem;"><strong>Total Paid:</strong> <span style="color: green;">${$order.total_price|number_format:2}</span></p>
+            <p style="margin: 0 0 10px 0; font-size: 1.2rem;"><strong>Total Paid:</strong> <span class="text-success">${$order.total_price|number_format:2}</span></p>
             <p style="margin: 0;"><strong>Current Status:</strong> 
-                <span style="text-transform: uppercase; font-weight: bold;
-                    {if $order.status == 'pending'}color: orange;
-                    {elseif $order.status == 'completed'}color: green;
-                    {elseif $order.status == 'cancelled'}color: red;{/if}">
+                <span class="status-{$order.status}">
                     {$order.status}
                 </span>
             </p>
@@ -27,9 +24,9 @@
 
     <!-- 2. Detailed Order Items Table -->
     <h2 style="margin-bottom: 10px; font-size: 1.5rem;">Purchased Items</h2>
-    <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; border-collapse: collapse; background: #fff; margin-bottom: 30px;">
+    <table class="admin-table" style="margin-bottom: 30px;">
         <thead>
-            <tr style="background: #f0f0f0;">
+            <tr>
                 <th style="width: 10%;">Image</th>
                 <th style="width: 40%; text-align: left;">Product Name</th>
                 <th style="width: 15%; text-align: center;">Qty</th>
@@ -45,9 +42,9 @@
                 <tr>
                     <td style="text-align: center;">
                         {if $item.image_url|strpos:'/' === 0}
-                            <img src="{$item.image_url|escape}" width="50" style="border-radius: 4px;" alt="Product Image">
+                            <img src="{$item.image_url|escape}" width="50" class="thumb-image" alt="Product Image">
                         {else}
-                            <img src="/public/uploads/products/thumb_{$item.image_url|escape}" width="50" style="border-radius: 4px;" alt="Product Image">
+                            <img src="/public/uploads/products/thumb_{$item.image_url|escape}" width="50" class="thumb-image" alt="Product Image">
                         {/if}
                     </td>
                     <td><strong>{$item.name|escape}</strong><br><small style="color: #666;">Product ID: {$item.product_id}</small></td>
@@ -74,7 +71,7 @@
                 </select>
             </div>
 
-            <button type="submit" class="button-primary" style="padding: 12px 30px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; font-size: 1.1rem; font-weight: bold; transition: 0.2s;">
+            <button type="submit" class="btn-primary" style="padding: 12px 30px; font-size: 1.1rem; font-weight: bold; transition: 0.2s;">
                 Save Changes
             </button>
         </form>

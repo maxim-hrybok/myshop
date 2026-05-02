@@ -47,7 +47,7 @@
                     {* stock check*}
                     <button type="submit" class="card__add">Add to Cart</button>
                  {else}
-                    <button type="button" class="card__add" style="background: grey; cursor: not-allowed;" disabled>Sold Out</button>
+                    <button type="button" class="card__add btn-disabled">Sold Out</button>
                  {/if}
              {/if}
         </form>
