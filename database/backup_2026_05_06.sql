@@ -35,6 +35,26 @@ INSERT INTO `categories` (`id`, `name`) VALUES
 	(4, 'Dota2'),
 	(6, '1');
 
+-- Dumping structure for table project.comments
+CREATE TABLE IF NOT EXISTS `comments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `content` text NOT NULL,
+  `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `product_id` (`product_id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `fk_comment_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_comment_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Dumping data for table project.comments: ~2 rows (approximately)
+INSERT INTO `comments` (`id`, `product_id`, `user_id`, `content`, `status`, `created_at`) VALUES
+	(1, 15, 2, 'oh yee first comm xd', 'approved', '2026-05-04 18:47:28'),
+	(2, 15, 2, 'asdf', 'approved', '2026-05-05 21:27:49');
+
 -- Dumping structure for table project.login_attempts
 CREATE TABLE IF NOT EXISTS `login_attempts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -59,9 +79,9 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   KEY `product_id` (`product_id`),
   CONSTRAINT `1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
   CONSTRAINT `2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table project.order_items: ~33 rows (approximately)
+-- Dumping data for table project.order_items: ~32 rows (approximately)
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price_at_purchase`) VALUES
 	(1, 1, 1, 1, 440.10),
 	(2, 2, 1, 1, 440.10),
@@ -98,7 +118,9 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price_at
 	(33, 25, 11, 1, 4.75),
 	(34, 26, 3, 1, 19.99),
 	(35, 27, 14, 1, 12.00),
-	(36, 28, 14, 9, 12.00);
+	(36, 28, 14, 9, 12.00),
+	(37, 29, 15, 1, 119.31),
+	(38, 30, 15, 1, 119.31);
 
 -- Dumping structure for table project.orders
 CREATE TABLE IF NOT EXISTS `orders` (
@@ -110,9 +132,9 @@ CREATE TABLE IF NOT EXISTS `orders` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table project.orders: ~28 rows (approximately)
+-- Dumping data for table project.orders: ~27 rows (approximately)
 INSERT INTO `orders` (`id`, `user_id`, `total_price`, `status`, `created_at`) VALUES
 	(1, 2, 440.10, 'completed', '2026-03-03 20:40:46'),
 	(2, 2, 460.09, 'completed', '2026-03-03 20:40:57'),
@@ -141,7 +163,9 @@ INSERT INTO `orders` (`id`, `user_id`, `total_price`, `status`, `created_at`) VA
 	(25, 6, 4.75, 'pending', '2026-04-11 15:57:20'),
 	(26, 6, 19.99, 'completed', '2026-04-11 15:57:25'),
 	(27, 2, 12.00, 'pending', '2026-04-26 13:33:55'),
-	(28, 2, 108.00, 'pending', '2026-04-26 13:34:24');
+	(28, 2, 108.00, 'pending', '2026-04-26 13:34:24'),
+	(29, 2, 119.31, 'pending', '2026-05-02 18:05:26'),
+	(30, 2, 119.31, 'pending', '2026-05-05 21:27:43');
 
 -- Dumping structure for table project.product_category_map
 CREATE TABLE IF NOT EXISTS `product_category_map` (
@@ -197,7 +221,7 @@ INSERT INTO `products` (`id`, `name`, `price`, `image_url`, `status`, `discount`
 	(12, '6', 6.00, '/public/assets/img/steam.png', 'available', 5.00, '6', 0),
 	(13, 'cccat baaaad', 4.00, 'prod_69ee16d79e8824.14542168.jpg', 'available', 0.00, 'worst cat...', 3),
 	(14, 'bestCat', 12.00, 'prod_69ee0ea4669f76.32365850.jpg', 'available', 0.00, 'BEST CAT EVEERERERER', 4),
-	(15, 'ddd', 123.00, 'prod_69ee19ba58a669.31622908.jpg', 'available', 0.00, 'asdf', 4);
+	(15, 'ddd', 123.00, 'prod_69ee19ba58a669.31622908.jpg', 'available', 3.00, 'asdf', 2);
 
 -- Dumping structure for table project.users
 CREATE TABLE IF NOT EXISTS `users` (

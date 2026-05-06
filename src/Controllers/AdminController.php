@@ -8,12 +8,16 @@ use App\Models\OrderModel;
 use App\Services\ImageService;
 use Smarty\Smarty;
 
+use App\Models\CommentModel;
+
 class AdminController {
     private ProductModel $productModel;
     private CategoryModel $categoryModel;
     private OrderModel $orderModel;
     private ImageService $imageService;
     private Smarty $smarty;
+
+    private CommentModel $commentModel;
 
     public function __construct(\PDO $pdo, Smarty $smarty) {
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -28,6 +32,8 @@ class AdminController {
         $this->orderModel = new OrderModel($pdo);
         $this->imageService = new ImageService();
         $this->smarty = $smarty;
+
+        $this->commentModel = new CommentModel($pdo);
     }
 
     public function dashboard() {
@@ -263,5 +269,28 @@ class AdminController {
         header('Location: /admin/orders');
         exit();
     }
+
+    public function showComments() {
+        $pendingComments = $this->commentModel->getPendingComments();
+        
+        $this->smarty->assign('comments', $pendingComments);
+        $this->smarty->assign('pageTitle', 'Moderate Comments');
+        $this->smarty->display('admin/comments.tpl');
+    }
+
+    public function approveComment($vars) {
+        $id = (int)$vars['id'];
+        $this->commentModel->updateStatus($id, 'approved');
+        header('Location: /admin/comments');
+        exit();
+    }
+
+    public function deleteComment($vars) {
+        $id = (int)$vars['id'];
+        $this->commentModel->deleteComment($id);
+        header('Location: /admin/comments');
+        exit();
+    }
+    
 }
 ?>

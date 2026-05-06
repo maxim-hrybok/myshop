@@ -44,6 +44,8 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', ['App\Controllers\ProductController', 'showAll']);
     $r->addRoute('GET', '/products', ['App\Controllers\ProductController', 'showAll']);
     $r->addRoute('GET', '/product/{id:\d+}', ['App\Controllers\ProductController', 'show']);
+    $r->addRoute('POST', '/product/{id:\d+}/comment', ['App\Controllers\ProductController', 'addComment']);
+    $r->addRoute('GET', '/about', ['App\Controllers\PageController', 'about']);
 
     // Auth
     $r->addRoute('GET', '/login',['App\Controllers\AuthController', 'showLoginForm']);
@@ -67,6 +69,11 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/admin/categories/edit/{id:\d+}',['App\Controllers\CategoryController', 'edit']);
     $r->addRoute('POST', '/admin/categories/update/{id:\d+}', ['App\Controllers\CategoryController', 'update']);
     $r->addRoute('POST', '/admin/categories/delete/{id:\d+}',['App\Controllers\CategoryController', 'delete']);
+    
+    // Admin Comments
+    $r->addRoute('GET', '/admin/comments', ['App\Controllers\AdminController', 'showComments']);
+    $r->addRoute('POST', '/admin/comments/approve/{id:\d+}', ['App\Controllers\AdminController', 'approveComment']);
+    $r->addRoute('POST', '/admin/comments/delete/{id:\d+}',['App\Controllers\AdminController', 'deleteComment']);
 
     // Cart & Orders
     $r->addRoute('GET', '/cart',['App\Controllers\CartController', 'view']);

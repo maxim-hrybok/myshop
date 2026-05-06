@@ -12,6 +12,7 @@ This project is more than a simple website; it's a complete e-commerce solution 
 
 #### Customer-Facing Features:
 *   **Product Catalog & Optimization:** Browse a grid of all available products with automatically generated, lightweight thumbnails for fast page loading.
+*   **Interactive Comment System:** Users can leave reviews and comments with full native Emoji support (`utf8mb4`). Comments are protected against XSS and routed through an admin moderation queue.
 *   **Advanced Filtering & Search:** Filter products by category and search by name.
 *   **Pagination:** Efficiently navigate through large product lists.
 *   **Shopping Cart:** A fully persistent session-based shopping cart.
@@ -21,6 +22,7 @@ This project is more than a simple website; it's a complete e-commerce solution 
 
 #### Administrative Panel Features:
 *   **Secure Admin Area:** The admin dashboard is accessible only to authenticated admin users.
+*   **Comment Moderation:** Dedicated dashboard to review, approve, or reject user comments before they appear publicly.
 *   **Full Product Management (CRUD):** Admins can Create, Read, Update, and Delete any product.
 *   **Category Management (CRUD):** Easily add, edit, and remove product categories.
 *   **Advanced Order Management:** View all customer orders, filter them by status (Pending, Completed, Cancelled), and search by Order ID or User ID.
@@ -36,15 +38,18 @@ This project was developed with a focus on “clean architecture” and maintain
 *   **Backend:** PHP 8+
 *   **Database:** MariaDB / MySQL
 *   **Web Server:** Apache (with `mod_rewrite` for clean URLs)
-*   **Frontend:** HTML5, CSS3, Smarty Templating Engine
+*   **Frontend:** HTML5, CSS3, Smarty Templating Engine (Strictly decoupled, near zero inline CSS)
 *   **Key Libraries:**
+    *   `php-di/php-di`: PSR-11 compliant Dependency Injection Container for Autowiring.
     *   `nikic/fast-route`: A high-performance request router.
     *   `vlucas/phpdotenv`: For secure management of environment variables.
     *   `smarty/smarty`: A reliable template engine separating logic from presentation (extended with custom security plugins).
 *   **Architectural Patterns & Engineering Highlights:**
+    *   **Inversion of Control (IoC):** Implementation of a PSR-11 Dependency Injection Container (PHP-DI) to completely automate object instantiation and manage the dependency tree without manual wiring.
     *   **MVC-S Architecture:** Strict Separation of Concerns (SoC) using Models, Views, Controllers, and Services.
     *   **Eager Loading:** Eliminates the classic N+1 database query problem by efficiently mapping relational categories to products in single, batched queries.
     *   **Atomic Database Operations:** Resolves critical e-commerce race conditions during checkout using atomic SQL updates (`rowCount()` validation) and PDO Transactions.
+    *   **Dynamic Image Processing:** Secure, server-side image upload validation and on-the-fly resizing (Thumbnails & Full-Res) using the native GD library to drastically reduce bandwidth.
     *   **Graceful Degradation:** Features adaptive architecture (e.g., falling back from `cURL` to secure native streams for Google APIs if extensions are missing on the host server).
     *   **Security First:** 
         *   **SQL Injection Prevention:** 100% coverage using PDO Prepared Statements.

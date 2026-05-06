@@ -30,7 +30,7 @@
                 {/if}
             </div>
             {if $product.stock > 0}
-                <div class="text-success" style="margin-bottom: 10px;">
+                <div class="text-success mb-2">
                     In Stock: {$product.stock}
                 </div>
              <!-- Link or Form to Add to Cart -->
@@ -38,13 +38,57 @@
                     <button type="submit" class="product-detail__add-to-cart">Add to Cart</button>
                 </form>
             {else}
-                <div class="text-danger" style="margin-bottom: 10px; font-size: 1.2rem;">
+                <div class="text-danger mb-2 font-large">
                     OUT OF STOCK
                 </div>
                 <button class="product-detail__add-to-cart btn-disabled">Sold Out</button>
             {/if}
         </div>
     </article>
+    <!-- Comments Section -->
+    <section class="comments-section">
+        <h2>Customer Reviews & Comments</h2>
+
+        {if isset($flash_message)}
+            <div class="alert-success">
+                {$flash_message}
+            </div>
+        {/if}
+
+        <!-- Comment Form -->
+        <div class="comment-form-box">
+            {if isset($session.user_id)}
+                <form action="/product/{$product.id}/comment" method="POST">
+                    <div class="form-group">
+                        <label for="content" class="form-label">Leave a comment (Emojis+):</label>
+                        <textarea name="content" id="content" rows="4" required class="form-control mt-2"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary mt-2">Submit Comment</button>
+                </form>
+            {else}
+                <p>Please <a href="/login" class="text-primary font-weight-bold">Login</a> to leave a comment.</p>
+            {/if}
+        </div>
+
+        <!-- Comments List -->
+        <div class="comments-list">
+            {if empty($comments)}
+                <p class="text-muted font-italic">No reviews yet. Be the first to comment!</p>
+            {else}
+                {foreach $comments as $comment}
+                    <div class="comment-card">
+                        <div class="comment-card-header">
+                            <strong class="comment-author">{$comment.first_name|escape}</strong>
+                            <span class="comment-date">{$comment.created_at|date_format:"%b %e, %Y %H:%M"}</span>
+                        </div>
+                        <!-- Use nl2br to preserve line breaks in the user's comment, and escape for security against XSS -->
+                        <p class="comment-body">{$comment.content|escape|nl2br}</p>
+                    </div>
+                {/foreach}
+            {/if}
+        </div>
+    </section>
+
     {else}
     <p>This product could not be found.</p>
     {/if}

@@ -3,6 +3,7 @@
     <div class="admin-header">
         <h1>Admin Dashboard - Products</h1>
         <div class="admin-actions">
+            <a href="/admin/comments" class="btn-category"">Moderate Comments</a>   
             <a href="/admin/orders" class="btn-danger">Manage Orders</a>
             <a href="/admin/categories" class="btn-category">Manage Categories</a>
             <a href="/admin/create" class="btn-success">+ Add New Product</a>
@@ -66,7 +67,7 @@
                             <span class="category-tag">{$c.name|escape}</span>
                         {/foreach}
                     {else}
-                        <span style="color: #999;">None</span>
+                        <span class="text-muted-light">None</span>
                     {/if}
                 </td>
                 <td>${$p.price}</td>
@@ -80,7 +81,7 @@
                 </td>
                 <td>
                     <a href="/admin/edit/{$p.id}" class="admin-link">Edit</a>
-                    <form action="/admin/delete/{$p.id}" method="POST" style="display:inline;" onsubmit="return confirm('WARNING: This deletes the product entirely. Are you sure?');">
+                    <form action="/admin/delete/{$p.id}" method="POST" class="d-inline" onsubmit="return confirm('WARNING: This deletes the product entirely. Are you sure?');">
                         <button type="submit" class="delete-link">Delete</button>
                     </form>
                 </td>

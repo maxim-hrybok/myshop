@@ -4,16 +4,20 @@ namespace App\Controllers;
 
 use App\Models\ProductModel;
 use App\Models\CategoryModel;
+use App\Models\CommentModel;
 use Smarty\Smarty;
 
 class ProductController {
     private ProductModel $model; 
     private CategoryModel $categoryModel;
+    private CommentModel $commentModel;
     private Smarty $smarty;
+    
 
-    public function __construct(ProductModel $model, CategoryModel $categoryModel, Smarty $smarty) {
+    public function __construct(ProductModel $model, CategoryModel $categoryModel, CommentModel $commentModel, Smarty $smarty) {
         $this->model = $model;
         $this->categoryModel = $categoryModel;
+        $this->commentModel = $commentModel;
         $this->smarty = $smarty;
     }
 
@@ -63,9 +67,38 @@ class ProductController {
             return;
         }
 
+        // Fetch approved comments
+        $comments = $this->commentModel->getApprovedCommentsForProduct($id);
+        $this->smarty->assign("comments", $comments);
+
+        if (isset($_SESSION['flash_message'])) {
+            $this->smarty->assign('flash_message', $_SESSION['flash_message']);
+            unset($_SESSION['flash_message']);
+        }
         $this->smarty->assign("product", $product);
         $this->smarty->assign("pageTitle", $product['name']);
         $this->smarty->display('products/detail.tpl');
+    }
+    
+     public function addComment(array $vars) {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit();
+        }
+
+        $productId = (int)$vars["id"];
+        $userId = (int)$_SESSION['user_id'];
+        $content = trim($_POST['content'] ?? '');
+
+        if (!empty($content)) {
+            $this->commentModel->addComment($productId, $userId, $content);
+            $_SESSION['flash_message'] = "Your comment has been submitted and is awaiting admin approval.";
+        }
+
+        header("Location: /product/" . $productId);
+        exit();
     }
 }
 ?>

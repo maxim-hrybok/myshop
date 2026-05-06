@@ -32,6 +32,7 @@
 
 /* Alerts */
 .alert-error { background: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #f5c6cb; }
+.alert-success { background: #d4edda; color: #155724; padding: 10px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #c3e6cb; }
 
 /* Pagination */
 .pagination { margin-top: 20px; text-align: center; }
@@ -92,8 +93,35 @@
 .admin-filter-select { padding: 8px; }
 .admin-categories-filter { display: flex; flex-direction: column; max-height: 80px; overflow-y: auto; background: #fff; border: 1px solid #ccc; padding: 5px; min-width: 200px; }
 .admin-category-label { font-size: 0.9rem; cursor: pointer; }
+.admin-category-header { font-size: 0.8rem; color: #666; margin-bottom: 3px; display: block; }
 .category-tag { background: #e2e3e5; padding: 2px 6px; border-radius: 10px; font-size: 0.8rem; display: inline-block; margin: 2px; }
 .stock-low { color: red; font-weight: bold; }
 .stock-good { color: green; font-weight: bold; }
 .status-active { color: green; font-weight: bold; }
 .status-hidden { color: red; font-weight: bold; }
+
+/* New Comments Section Styles */
+.comments-section { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #dee2e6; }
+.comment-form-box { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 2rem; }
+.comment-card { background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.comment-card-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.comment-author { color: #212529; }
+.comment-date { font-size: 0.85rem; color: #999; }
+.comment-body { margin: 0; line-height: 1.5; color: #212529; }
+
+/* Utility Classes for Clean HTML */
+.w-15 { width: 15%; }
+.w-40 { width: 40%; }
+.text-center { text-align: center; }
+.text-muted { color: #666; }
+.text-muted-light { color: #999; }
+.text-primary { color: #007bff; }
+.font-weight-bold { font-weight: bold; }
+.font-italic { font-style: italic; }
+.font-large { font-size: 1.2rem; }
+.d-inline { display: inline; }
+.p-20 { padding: 20px; }
+.mt-1 { margin-top: 5px; }
+.mt-2 { margin-top: 10px; }
+.mb-2 { margin-bottom: 10px; }
+.btn-sm { padding: 5px 10px; font-size: 0.9rem; }
