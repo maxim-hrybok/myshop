@@ -27,9 +27,11 @@
                     <td>{$c.content|escape|nl2br}</td>
                     <td class="text-center">
                         <form action="/admin/comments/approve/{$c.id}" method="POST" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{$csrf_token}">
                             <button type="submit" class="btn-success btn-sm">Approve</button>
                         </form>
                         <form action="/admin/comments/delete/{$c.id}" method="POST" class="d-inline" onsubmit="return confirm('Reject and delete this comment?');">
+                            <input type="hidden" name="csrf_token" value="{$csrf_token}">
                             <button type="submit" class="btn-danger btn-sm mt-1">Reject</button>
                         </form>
                     </td>

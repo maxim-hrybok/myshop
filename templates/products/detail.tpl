@@ -35,6 +35,7 @@
                 </div>
              <!-- Link or Form to Add to Cart -->
                 <form action="/cart/add/{$product.id}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{$csrf_token}">
                     <button type="submit" class="product-detail__add-to-cart">Add to Cart</button>
                 </form>
             {else}
@@ -59,6 +60,7 @@
         <div class="comment-form-box">
             {if isset($session.user_id)}
                 <form action="/product/{$product.id}/comment" method="POST">
+                    <input type="hidden" name="csrf_token" value="{$csrf_token}">
                     <div class="form-group">
                         <label for="content" class="form-label">Leave a comment (Emojis+):</label>
                         <textarea name="content" id="content" rows="4" required class="form-control mt-2"></textarea>

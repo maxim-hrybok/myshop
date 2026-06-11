@@ -62,7 +62,7 @@
     <div style="border-top: 2px dashed #ccc; padding-top: 20px;">
         <h2 style="margin-bottom: 15px; font-size: 1.5rem;">Update Order Status</h2>
         <form action="/admin/orders/update/{$order.id}" method="POST" style="display: flex; align-items: center; gap: 15px;">
-            
+            <input type="hidden" name="csrf_token" value="{$csrf_token}">
             <div class="form-group" style="flex: 1; margin: 0;">
                 <select name="status" id="status" style="width: 100%; padding: 12px; border-radius: 4px; border: 1px solid #ccc; font-size: 1.1rem; font-weight: bold;">
                     <option value="pending" {if $order.status == 'pending'}selected{/if}>Pending</option>

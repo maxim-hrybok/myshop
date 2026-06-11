@@ -3,6 +3,7 @@
     <h1>{if isset($category)}Edit Category{else}Add Category{/if}</h1>
 
     <form action="{if isset($category)}/admin/categories/update/{$category.id}{else}/admin/categories/store{/if}" method="POST">
+        <input type="hidden" name="csrf_token" value="{$csrf_token}">
         <div class="form-group" style="margin-bottom: 20px;">
             <label style="font-weight: bold; display: block; margin-bottom: 5px;">Category Name:</label>
             <input type="text" name="name" value="{$category.name|default:''}" required style="width: 100%; padding: 10px; box-sizing: border-box;" placeholder="e.g. Action Games, Hardware, etc.">

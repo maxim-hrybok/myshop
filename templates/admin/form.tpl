@@ -10,7 +10,7 @@
 
 <!-- CRITICAL: enctype="multipart/form-data" is required for file uploads -->
 <form action="{if isset($product)}/admin/update/{$product.id}{else}/admin/store{/if}" method="POST" enctype="multipart/form-data">
-    
+    <input type="hidden" name="csrf_token" value="{$csrf_token}">
     <!-- Retain existing image if editing -->
     {if isset($product)}
         <input type="hidden" name="existing_image_url" value="{$product.image_url|escape}">

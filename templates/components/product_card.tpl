@@ -39,6 +39,7 @@
 
         <!-- add to cart to product cards ))-->
         <form action="/cart/add/{$product.id}" method="POST">
+        <input type="hidden" name="csrf_token" value="{$csrf_token}">
              {* stock check  *}
              {if isset($product.stock) && $product.stock > 0}
                 <button type="submit" class="card__add">Add to Cart</button>

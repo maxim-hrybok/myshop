@@ -24,6 +24,7 @@
                     <td style="text-align: center;">
                         <a href="/admin/categories/edit/{$cat.id}" class="admin-link">Edit</a>
                         <form action="/admin/categories/delete/{$cat.id}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure? Products in this category will NOT be deleted, but the category link will be removed.');">
+                            <input type="hidden" name="csrf_token" value="{$csrf_token}">
                             <button type="submit" class="delete-link">Delete</button>
                         </form>
                     </td>

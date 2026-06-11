@@ -26,6 +26,14 @@ public function getFilteredProducts(int $page = 1, int $limit = 10, string $sear
     if ($page < 1) $page = 1;
     if ($limit < 1) $limit = 10;
 
+    $cleanCategoryIds =[];
+    foreach ($categoryIds as $id) {
+        if (is_numeric($id)) {
+            $cleanCategoryIds[] = (int)$id;
+        }
+    }
+    $categoryIds = $cleanCategoryIds;
+
     $offset = ($page - 1) * $limit;
     $params = [];
     $whereClauses = [];

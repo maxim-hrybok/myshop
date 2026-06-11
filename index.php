@@ -1,11 +1,43 @@
 <?php
 session_start();
 
+// 1. Generate a cryptographically secure CSRF token if one doesn't exist
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// 2. Global CSRF Protection Middleware
+// Intercept ALL POST requests and verify the token BEFORE routing
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $submittedToken = $_POST['csrf_token'] ?? '';
+    // hash_equals prevents timing attacks during string comparison
+    if (!hash_equals($_SESSION['csrf_token'], $submittedToken)) {
+        http_response_code(403);
+        die("403 Forbidden: Invalid or missing CSRF Token. Please refresh the page and try again.");
+    }
+}
+
 require_once __DIR__ . '/vendor/autoload.php';
 
 // 1. Load Environment Variables First
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
+
+header_remove('X-Powered-By');
+
+// 2. Add Strict Security Headers (Fixes: "Missing Anti-clickjacking" & "X-Content-Type-Options Missing")
+header('X-Frame-Options: DENY'); // Prevents your site from being loaded in an iframe
+header('X-Content-Type-Options: nosniff'); // Prevents browsers from guessing file types
+
+// 3. Secure Session Cookies (Fixes: "Cookie No HttpOnly Flag" & "Cookie without SameSite Attribute")
+session_set_cookie_params([
+    'lifetime' => 86400,
+    'path' => '/',
+    'domain' => '',
+    'secure' => isset($_SERVER['HTTPS']), // Only sends cookies over HTTPS (if enabled)
+    'httponly' => true,                   // Blocks JavaScript from stealing the session (XSS protection)
+    'samesite' => 'Strict'                // Blocks cookies from being sent cross-site (CSRF protection)
+]);
 
 // 2. Configure Error Reporting securely based on environment
 if (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') {
@@ -30,6 +62,9 @@ $smarty = $container->get(\Smarty\Smarty::class);// ----------------------------
 
 // Make session data available to ALL Smarty templates
 $smarty->assign('session', $_SESSION);
+
+// Make the CSRF token easily accessible in templates
+$smarty->assign('csrf_token', $_SESSION['csrf_token']);
 
 $cartItemCount = 0;
 if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {

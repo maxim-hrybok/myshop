@@ -82,7 +82,8 @@
                 <td>
                     <a href="/admin/edit/{$p.id}" class="admin-link">Edit</a>
                     <form action="/admin/delete/{$p.id}" method="POST" class="d-inline" onsubmit="return confirm('WARNING: This deletes the product entirely. Are you sure?');">
-                        <button type="submit" class="delete-link">Delete</button>
+                    <input type="hidden" name="csrf_token" value="{$csrf_token}">    
+                    <button type="submit" class="delete-link">Delete</button>
                     </form>
                 </td>
             </tr>

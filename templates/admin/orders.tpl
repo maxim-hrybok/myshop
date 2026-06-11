@@ -58,7 +58,8 @@
                     <td style="text-align: center;">
                         <a href="/admin/orders/edit/{$o.id}" class="admin-link">Edit</a>
                         <form action="/admin/orders/delete/{$o.id}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure? This action will permanently delete the order and its items.');">
-                            <button type="submit" class="delete-link">Delete</button>
+                        <input type="hidden" name="csrf_token" value="{$csrf_token}">    
+                        <button type="submit" class="delete-link">Delete</button>
                         </form>
                     </td>
                 </tr>

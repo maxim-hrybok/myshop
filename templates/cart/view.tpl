@@ -42,6 +42,7 @@
             
             {if isset($session.user_id)}
                 <form action="/checkout" method="POST">
+                    <input type="hidden" name="csrf_token" value="{$csrf_token}">
                     <button type="submit" class="btn-primary checkout-btn">
                         Checkout Now
                     </button>

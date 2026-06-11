@@ -10,6 +10,7 @@
 
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <form action="/login" method="POST">
+    <input type="hidden" name="csrf_token" value="{$csrf_token}">
         <div class="form-group">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required>
