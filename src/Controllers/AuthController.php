@@ -3,15 +3,18 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use App\Config\ConfigService;
 use Smarty\Smarty;
 
 class AuthController {
     private \PDO $pdo;
     private Smarty $smarty;
+    private ConfigService $config;
 
-    public function __construct(\PDO $pdo, Smarty $smarty) {
+    public function __construct(\PDO $pdo, Smarty $smarty, ConfigService $config) {
         $this->pdo = $pdo;
         $this->smarty = $smarty;
+        $this->config = $config;
     }
 
     // Displays the login page
@@ -209,7 +212,7 @@ class AuthController {
             return false;
         }
 
-        $secret = $_ENV['RECAPTCHA_SECRET_KEY'] ?? '';
+        $secret = $this->config->get('recaptcha.secret_key');
         $verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
         $postData = http_build_query([
             'secret' => $secret,
@@ -217,6 +220,8 @@ class AuthController {
         ]);
 
         $response = false;
+
+        $isDevelopment = $this->config->get('app.env') === 'development';
 
         // Enterprise Pattern: Graceful Degradation
         // If the server has cURL installed, use the strict enterprise method.
@@ -228,7 +233,7 @@ class AuthController {
             \curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
             
             // Bypass strict local SSL certificate checks for localhost development
-            if (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') {
+            if ($isDevelopment) {
                 \curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             }
             
@@ -244,8 +249,8 @@ class AuthController {
                     'content' => $postData
                 ],
                 'ssl' =>[
-                    'verify_peer' => (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') ? false : true,
-                    'verify_peer_name' => (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') ? false : true,
+                    'verify_peer' => !$isDevelopment,
+                    'verify_peer_name' => !$isDevelopment,
                 ]
             ];
             $context  = stream_context_create($options);

@@ -23,13 +23,21 @@ require_once __DIR__ . '/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-header_remove('X-Powered-By');
 
-// 2. Add Strict Security Headers (Fixes: "Missing Anti-clickjacking" & "X-Content-Type-Options Missing")
+// 2. Build Container FIRST, so we can access the ConfigService safely
+$containerBuilder = new \DI\ContainerBuilder();
+$containerBuilder->addDefinitions(__DIR__ . '/config/dependencies.php');
+$container = $containerBuilder->build();
+
+// 3. Add Strict Security Headers (Fixes: "Missing Anti-clickjacking" & "X-Content-Type-Options Missing") + Fetch ConfigService
+$config = $container->get(\App\Config\ConfigService::class);
+
+
+header_remove('X-Powered-By');
 header('X-Frame-Options: DENY'); // Prevents your site from being loaded in an iframe
 header('X-Content-Type-Options: nosniff'); // Prevents browsers from guessing file types
 
-// 3. Secure Session Cookies (Fixes: "Cookie No HttpOnly Flag" & "Cookie without SameSite Attribute")
+// Secure Session Cookies (Fixes: "Cookie No HttpOnly Flag" & "Cookie without SameSite Attribute")
 session_set_cookie_params([
     'lifetime' => 86400,
     'path' => '/',
@@ -39,8 +47,8 @@ session_set_cookie_params([
     'samesite' => 'Strict'                // Blocks cookies from being sent cross-site (CSRF protection)
 ]);
 
-// 2. Configure Error Reporting securely based on environment
-if (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') {
+// 4. Configure Error Reporting securely based on environment
+if ($config->get('app.env') === 'development') {
     ini_set('display_errors', 1);
     error_reporting(E_ALL);
 } else {
@@ -48,17 +56,8 @@ if (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') {
     error_reporting(0);
 }
 
-// 3. Connect to the database and smarty (config)
-require_once __DIR__ . '/config/database.php';
-$smarty = require_once __DIR__ . '/config/smarty.php';
-
-
-$containerBuilder = new \DI\ContainerBuilder();
-$containerBuilder->addDefinitions(__DIR__ . '/config/dependencies.php');
-$container = $containerBuilder->build();
-
-$smarty = $container->get(\Smarty\Smarty::class);// ------------------------------------------------------------------------
-
+// 5. Get Smarty from the container
+$smarty = $container->get(\Smarty\Smarty::class);
 
 // Make session data available to ALL Smarty templates
 $smarty->assign('session', $_SESSION);
@@ -72,7 +71,8 @@ if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
 }
 $smarty->assign('cartItemCount', $cartItemCount);//#########################################################################saved part 
 // Pass public reCAPTCHA key to frontend
-$smarty->assign('recaptcha_site_key', $_ENV['RECAPTCHA_SITE_KEY'] ?? '');
+$smarty->assign('recaptcha_site_key', $config->get('recaptcha.site_key'));
+
 // 2. === ROUTE DEFINITIONS ===
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     // Public Products

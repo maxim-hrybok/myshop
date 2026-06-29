@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   CONSTRAINT `2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table project.order_items: ~32 rows (approximately)
+-- Dumping data for table project.order_items: ~31 rows (approximately)
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `price_at_purchase`) VALUES
 	(1, 1, 1, 1, 440.10),
 	(2, 2, 1, 1, 440.10),
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   CONSTRAINT `1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
--- Dumping data for table project.orders: ~27 rows (approximately)
+-- Dumping data for table project.orders: ~26 rows (approximately)
 INSERT INTO `orders` (`id`, `user_id`, `total_price`, `status`, `created_at`) VALUES
 	(1, 2, 440.10, 'completed', '2026-03-03 20:40:46'),
 	(2, 2, 460.09, 'completed', '2026-03-03 20:40:57'),
@@ -235,14 +235,13 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table project.users: ~6 rows (approximately)
+-- Dumping data for table project.users: ~5 rows (approximately)
 INSERT INTO `users` (`id`, `email`, `password_hash`, `first_name`, `is_admin`, `created_at`) VALUES
 	(1, 'haker@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$WjJ2dmI1aUV5Vm1PRjV2bQ$LWSO9X2zFP7vD+S0IZwHwhMu692goTeIsw9agpqt4GI', 'caster', 0, '2026-02-24 11:51:43'),
 	(2, 'admin@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$eHJJZG5zLnRYdmVkYi93Sw$tKueDAb7TE7uHYJWps07IMJa5ZuBawN90xFM48x+BPo', 'adminka', 1, '2026-03-01 19:25:57'),
-	(3, 'admin@gmail.c', '$argon2id$v=19$m=65536,t=4,p=1$OVZKVGExbWxBdWpLOS5oVQ$fKGQ4fOzG/iHgYGiXo8OBTbRNHGL2Tz1pgoEG5km3gY', 'adminka2', 0, '2026-03-31 12:30:44'),
-	(4, 'admin@gmaa.a', '$argon2id$v=19$m=65536,t=4,p=1$T0J2MGl1QXR5Nkt0cXdEag$0BxDgJ6NNGARcF9A1yuvkRg1wOb4TbVvLTyP+sjqZVM', 'admin', 0, '2026-03-31 12:31:26'),
-	(5, 'admin2@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$Q05hNGpKYy9GOWhjVUpmVA$kqZawOd1saEBq1yR4XjqrU5vxDYt/76Ln9gneWtr/5A', 'admin2@gmail.com', 0, '2026-04-09 13:13:11'),
-	(6, 'admin3@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$Sk0uNHlrQ1RzLjF2NEF1dQ$7mqaawaIC/8nfzAIY7By6mAXJmrd6+VmA6+ukhaoZmI', 'chykcha', 0, '2026-04-11 15:57:16');
+	(3, 'admin@gmail.c', 'a', 'adminka2', 0, '2026-03-31 12:30:44'),
+	(5, 'admin2@gmail.com', '1', 'admin2@gmail.com', 0, '2026-04-09 13:13:11'),
+	(6, 'admin3@gmail.com', '1', 'chykcha', 0, '2026-04-11 15:57:16');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
