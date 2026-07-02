@@ -2,11 +2,11 @@
 
 namespace App\Controllers;
 
-use App\Models\CategoryModel;
+use App\Repositories\CategoryRepository;
 use Smarty\Smarty;
 
 class CategoryController {
-    private CategoryModel $categoryModel;
+    private CategoryRepository $categoryRepository;
     private Smarty $smarty;
 
     public function __construct(\PDO $pdo, Smarty $smarty) {
@@ -17,12 +17,12 @@ class CategoryController {
             exit();
         }
 
-        $this->categoryModel = new CategoryModel($pdo);
+        $this->categoryRepository = new CategoryRepository($pdo);
         $this->smarty = $smarty;
     }
 
     public function index() {
-        $categories = $this->categoryModel->getAllCategories();
+        $categories = $this->categoryRepository->getAllCategories();
         $this->smarty->assign('categories', $categories);
         $this->smarty->assign('pageTitle', 'Manage Categories');
         $this->smarty->display('admin/categories/list.tpl');
@@ -37,7 +37,7 @@ class CategoryController {
     public function store() {
         $name = trim($_POST['name'] ?? '');
         if (!empty($name)) {
-            $this->categoryModel->createCategory($name);
+            $this->categoryRepository->createCategory($name);
         }
         header('Location: /admin/categories');
         exit();
@@ -45,7 +45,7 @@ class CategoryController {
 
     public function edit($vars) {
         $id = (int)$vars['id'];
-        $category = $this->categoryModel->findCategoryById($id);
+        $category = $this->categoryRepository->findCategoryById($id);
 
         if (!$category) {
             header('Location: /admin/categories');
@@ -62,7 +62,7 @@ class CategoryController {
         $name = trim($_POST['name'] ?? '');
 
         if (!empty($name)) {
-            $this->categoryModel->updateCategory($id, $name);
+            $this->categoryRepository->updateCategory($id, $name);
         }
         header('Location: /admin/categories');
         exit();
@@ -70,7 +70,7 @@ class CategoryController {
 
     public function delete($vars) {
         $id = (int)$vars['id'];
-        $this->categoryModel->deleteCategory($id);
+        $this->categoryRepository->deleteCategory($id);
         header('Location: /admin/categories');
         exit();
     }

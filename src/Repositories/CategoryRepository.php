@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Repositories;
 
-class CategoryModel {
+class CategoryRepository {
     private \PDO $pdo;
 
     public function __construct(\PDO $pdo) {

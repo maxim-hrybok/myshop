@@ -2,22 +2,22 @@
 
 namespace App\Controllers;
 
-use App\Models\ProductModel;
-use App\Models\CategoryModel;
-use App\Models\CommentModel;
+use App\Repositories\ProductRepository;
+use App\Repositories\CategoryRepository;
+use App\Repositories\CommentRepository;
 use Smarty\Smarty;
 
 class ProductController {
-    private ProductModel $model; 
-    private CategoryModel $categoryModel;
-    private CommentModel $commentModel;
+    private ProductRepository $productRepository;
+    private CategoryRepository $categoryRepository;
+    private CommentRepository $commentRepository;
     private Smarty $smarty;
     
 
-    public function __construct(ProductModel $model, CategoryModel $categoryModel, CommentModel $commentModel, Smarty $smarty) {
-        $this->model = $model;
-        $this->categoryModel = $categoryModel;
-        $this->commentModel = $commentModel;
+    public function __construct(ProductRepository $productRepository, CategoryRepository $categoryRepository, CommentRepository $commentRepository, Smarty $smarty) {
+        $this->productRepository = $productRepository;
+        $this->categoryRepository = $categoryRepository;
+        $this->commentRepository = $commentRepository;
         $this->smarty = $smarty;
     }
 
@@ -29,8 +29,8 @@ class ProductController {
 
         // 2. Fetch data ('available' check)
         $limit = 9; // 9 products per page looks for a grid
-        $result = $this->model->getFilteredProducts($page, $limit, $search, 'available', $categoryIds);
-        $allCategories = $this->categoryModel->getAllCategories();
+        $result = $this->productRepository->getFilteredProducts($page, $limit, $search, 'available', $categoryIds);
+        $allCategories = $this->categoryRepository->getAllCategories();
 
         array_unshift($allCategories, ['id' => '0', 'name' => 'None']);// Add a default option for uncategorized products
 
@@ -57,7 +57,7 @@ class ProductController {
 
     public function show(array $vars) {
         $id = (int)$vars["id"];
-        $product = $this->model->getProductWithCalculations($id);
+        $product = $this->productRepository->getProductWithCalculations($id);
 
         // prevent users from directly viewing inactive products via URL
         if (!$product || $product['status'] !== 'available') {
@@ -68,7 +68,7 @@ class ProductController {
         }
 
         // Fetch approved comments
-        $comments = $this->commentModel->getApprovedCommentsForProduct($id);
+        $comments = $this->commentRepository->getApprovedCommentsForProduct($id);
         $this->smarty->assign("comments", $comments);
 
         if (isset($_SESSION['flash_message'])) {
@@ -93,7 +93,7 @@ class ProductController {
         $content = trim($_POST['content'] ?? '');
 
         if (!empty($content)) {
-            $this->commentModel->addComment($productId, $userId, $content);
+            $this->commentRepository->addComment($productId, $userId, $content);
             $_SESSION['flash_message'] = "Your comment has been submitted and is awaiting admin approval.";
         }
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Repositories;
 
-class UserModel {
+class UserRepository {
     private \PDO $pdo;
 
     public function __construct(\PDO $pdo) {

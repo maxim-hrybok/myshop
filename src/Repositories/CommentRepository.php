@@ -1,7 +1,7 @@
 <?php
-namespace App\Models;
+namespace App\Repositories;
 
-class CommentModel {
+class CommentRepository {
     private \PDO $pdo;
 
     public function __construct(\PDO $pdo) 

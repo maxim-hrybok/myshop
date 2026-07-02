@@ -1,9 +1,9 @@
 <?php
-namespace App\Models;
+namespace App\Repositories;
 
 use Exception;
 
-class OrderModel {
+class OrderRepository {
     private \PDO $pdo;
 
     public function __construct(\PDO $pdo) {

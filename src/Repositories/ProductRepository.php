@@ -1,8 +1,8 @@
 <?php
 //require_once __DIR__ . '/../config/database.php';
-namespace App\Models;
+namespace App\Repositories;
 
-class ProductModel {
+class ProductRepository {
     private \PDO $pdo;
 
     public function __construct(\PDO $pdo) {
