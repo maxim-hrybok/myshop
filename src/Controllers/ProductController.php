@@ -81,12 +81,12 @@ class ProductController {
     }
     
      public function addComment(array $vars) {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        // if (session_status() === PHP_SESSION_NONE) session_start();
         
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
-            exit();
-        }
+        // if (!isset($_SESSION['user_id'])) {
+        //     header('Location: /login');
+        //     exit();
+        // } mooved to AuthMiddleware.php
 
         $productId = (int)$vars["id"];
         $userId = (int)$_SESSION['user_id'];

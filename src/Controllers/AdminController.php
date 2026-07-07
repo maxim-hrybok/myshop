@@ -26,12 +26,12 @@ class AdminController {
         ProductService $productService, 
         Smarty $smarty
     ) {
-        if (session_status() === PHP_SESSION_NONE) session_start();
+        // if (session_status() === PHP_SESSION_NONE) session_start();
 
-        if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
-            header('Location: /login');
-            exit();
-        }
+        // if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
+        //     header('Location: /login');
+        //     exit();
+        // } mooved to AdminMiddleware.php
 
         // 2. Assign correctly
         $this->productRepository = $productRepository;

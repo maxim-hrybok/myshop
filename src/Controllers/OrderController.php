@@ -10,11 +10,11 @@ class OrderController {
 
     public function __construct(\PDO $pdo, Smarty $smarty) {
         // Auth check
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
-            exit();
-        }
+        // if (session_status() === PHP_SESSION_NONE) session_start();
+        // if (!isset($_SESSION['user_id'])) {
+        //     header('Location: /login');
+        //     exit();
+        // } mooved to AuthMiddleware.php
 
         $this->orderRepository = new OrderRepository($pdo);
         $this->smarty = $smarty;
