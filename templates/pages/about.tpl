@@ -10,11 +10,13 @@
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
 
         <h2 class="mb-2">Engineering Highlights</h2>
-        <ul style="line-height: 1.8; margin-bottom: 20px; color: #333; background-color: #f4f4f4;">
-            <li><strong>Custom MVC Architecture:</strong> Built entirely from scratch using strictly typed, object-oriented controllers, models, and services enforcing the Separation of Concerns (SoC).</li>
-            <li><strong>Inversion of Control (IoC):</strong> Powered by PHP-DI for PSR-11 compliant dependency injection and automatic autowiring.</li>
+        <ul style="line-height: 1.8; margin-bottom: 20px; color: #333; background-color: #f4f4f4; padding: 15px 20px 15px 40px; border-radius: 5px;">
+            <li><strong>Service-Oriented Architecture:</strong> Uses "Thin Controllers" that delegate complex business logic to dedicated Services (e.g., <code>AuthService</code>, <code>ProductService</code>), strictly separating HTTP transport from business rules.</li>
+            <li><strong>Repository Pattern:</strong> Database interactions are abstracted into Repository classes, ensuring the codebase is decoupled, scalable, and aligns with enterprise terminology.</li>
+            <li><strong>Middleware Pipeline:</strong> Security checks (Auth, Admin, CSRF) are handled gracefully via an intercepting middleware pipeline, keeping controllers perfectly clean and allowing third-party API webhook integrations.</li>
+            <li><strong>Inversion of Control (IoC) & DI:</strong> Powered by PHP-DI. Zero global variables. Everything from PDO connections to Configuration values (<code>ConfigService</code>) is lazily instantiated and injected via autowiring.</li>
+            <li><strong>Decoupled Routing:</strong> HTTP routing is extracted to a dedicated configuration file, leaving the Front Controller (<code>index.php</code>) focused strictly on bootstrapping.</li>
             <li><strong>Atomic Database Operations:</strong> Resolves critical concurrency and race conditions during checkout using atomic SQL updates and PDO Transactions.</li>
-            <li><strong>Optimized Querying:</strong> Eliminates the N+1 database query problem via Eager Loading for relational categories.</li>
             <li><strong>Security First:</strong> Hardened with PDO Prepared Statements against SQLi, Argon2id for password hashing, strict MIME-type validation for image uploads, and an IP-based brute-force lockout system.</li>
         </ul>
 
