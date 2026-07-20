@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: steamshop_web
+    ports:
+      - "8080:80" # Maps localhost:8080 to container port 80
+    volumes:
+      - .:/var/www/html # Mounts your project files in real-time
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: mariadb:10.11
+    container_name: steamshop_db
+    ports:
+      - "3307:3306" # Maps localhost:3307 to MariaDB port 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 22833 # Must match your .env DB_PASS
+      MYSQL_DATABASE: project    # Must match your .env DB_NAME
+    volumes:
+      - db_data:/var/lib/mysql   # Makes database persistent across restarts
+      # PRO TIP: Auto-import database on first creation
+      - ./database:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge

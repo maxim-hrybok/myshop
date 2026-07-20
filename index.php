@@ -1,4 +1,15 @@
 <?php
+
+// Secure Session Cookies (Fixes: "Cookie No HttpOnly Flag" & "Cookie without SameSite Attribute")
+session_set_cookie_params([
+    'lifetime' => 86400,
+    'path' => '/',
+    'domain' => '',
+    'secure' => isset($_SERVER['HTTPS']), // Only sends cookies over HTTPS (if enabled)
+    'httponly' => true,                   // Blocks JavaScript from stealing the session (XSS protection)
+    'samesite' => 'Strict'                // Blocks cookies from being sent cross-site (CSRF protection)
+]);
+
 session_start();
 
 // 1. Generate a cryptographically secure CSRF token if one doesn't exist
@@ -38,15 +49,7 @@ header_remove('X-Powered-By');
 header('X-Frame-Options: DENY'); // Prevents your site from being loaded in an iframe
 header('X-Content-Type-Options: nosniff'); // Prevents browsers from guessing file types
 
-// Secure Session Cookies (Fixes: "Cookie No HttpOnly Flag" & "Cookie without SameSite Attribute")
-session_set_cookie_params([
-    'lifetime' => 86400,
-    'path' => '/',
-    'domain' => '',
-    'secure' => isset($_SERVER['HTTPS']), // Only sends cookies over HTTPS (if enabled)
-    'httponly' => true,                   // Blocks JavaScript from stealing the session (XSS protection)
-    'samesite' => 'Strict'                // Blocks cookies from being sent cross-site (CSRF protection)
-]);
+
 
 // 4. Configure Error Reporting securely based on environment
 if ($config->get('app.env') === 'development') {

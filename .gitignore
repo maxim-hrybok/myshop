@@ -8,7 +8,7 @@
 
 # Environment/config
 /.env
-
+/envold.php
 
 # OS files
 Thumbs.db

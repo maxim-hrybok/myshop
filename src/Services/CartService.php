@@ -3,13 +3,15 @@ namespace App\Services;
 
 use App\Models\ProductModel;
 use App\Models\OrderModel;
+use App\Repositories\OrderRepository;
+use App\Repositories\ProductRepository;
 
 class CartService {
-    private ProductModel $productModel;
-    private OrderModel $orderModel;
+    private ProductRepository $productModel;
+    private OrderRepository $orderModel;
     private \PDO $pdo; // Needed for transactions
 
-    public function __construct(ProductModel $productModel, OrderModel $orderModel, \PDO $pdo) {
+    public function __construct(ProductRepository $productModel, OrderRepository $orderModel, \PDO $pdo) {
         $this->productModel = $productModel;
         $this->orderModel = $orderModel;
         $this->pdo = $pdo;
