@@ -33,7 +33,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 // 1. Load Environment Variables First
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+$dotenv->safeLoad(); // for missing .env file, use safeLoad() instead of load()
 
 
 // 2. Build Container FIRST, so we can access the ConfigService safely

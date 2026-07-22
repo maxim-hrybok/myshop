@@ -1,0 +1,6 @@
+# Use the official MariaDB image
+FROM mariadb:10.11
+
+# Copy your SQL backup into the auto-initialization folder
+# (Make sure the path to your backup file is correct)
+COPY database/backup_2026_06_27.sql /docker-entrypoint-initdb.d/init.sql

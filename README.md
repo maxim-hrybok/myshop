@@ -1,7 +1,7 @@
 # Steam Card Shop - Full-Stack PHP E-Commerce Platform
 
-A full-stack e-commerce web application built from the ground up using modern PHP, a custom MVC architecture, and industry-standard tools. This project is a practical demonstration of core web development principles, database design, security, and application architecture.
 
+A full-stack e-commerce web application built from the ground up using modern PHP, a custom MVC architecture, and industry-standard tools. This project demonstrates advanced software engineering principles, clean architecture, and modern DevOps practices without relying on heavy frameworks like Laravel or Symfony.
 **Live Demo:** [**https://somesite.ct.ws/**](https://somesite.ct.ws/)
 
 ---
@@ -35,6 +35,7 @@ This project is more than a simple website; it's a complete e-commerce solution 
 
 This project was developed with a focus on “clean architecture” and maintainability, using a modern PHP stack without relying on full-featured frameworks such as Laravel or Symfony, with the aim of gaining a deep understanding of the core components and gaining practical experience.
 
+*   **Infrastructure:** Docker & Docker Compose
 *   **Backend:** PHP 8+
 *   **Database:** MariaDB / MySQL
 *   **Web Server:** Apache (with `mod_rewrite` for clean URLs)
@@ -61,58 +62,63 @@ This project was developed with a focus on “clean architecture” and maintain
 
 ## Local Setup & Installation
 
-To run this project locally, follow these steps:
+You can run this entire platform locally in minutes using Docker. You do not need PHP, Apache, or MariaDB installed on your host machine.
 
-1.  **Prerequisites:**
-    *   A local server environment (XAMPP, WAMP, MAMP, or Docker).
-    *   PHP 8.0 or higher.
-    *   MariaDB or MySQL.
-    *   Composer installed globally.
+### 1. Create a `docker-compose.yml` file
+Create a folder for the project, and create a `docker-compose.yml` file inside it with the following content:
 
-2.  **Clone the Repository:**
-    ```bash
-    git clone https://github.com/maxim-hrybok/myshop.git
-    cd myshop
-    ```
+```yaml
+version: '3.8'
 
-3.  **Install Dependencies:**
-    ```bash
-    composer install
-    ```
+services:
+  web:
+    image: 6272715work/steamshop:latest
+    container_name: steamshop_web
+    ports:
+      - "8080:80"
+    environment:
+      - APP_ENV=development
+      - DB_HOST=db
+      - DB_NAME=project
+      - DB_USER=root
+      - DB_PASS=secret
+      - DB_CHARSET=utf8mb4
+      - RECAPTCHA_SITE_KEY= ###https://www.google.com/recaptcha/admin
+      - RECAPTCHA_SECRET_KEY= ###https://www.google.com/recaptcha/admin
+      - db
+    networks:
+      - steam-net
 
-4.  **Database Setup:**
-    *   Create a new database in your database manager (e.g., `phpMyAdmin`).
-    *   Import the `database/backup.sql` file into your newly created database.
+  db:
+    # pre-seeded database image
+    image: 6272715work/steamshop-db:latest
+    container_name: steamshop_db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: project
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - steam-net
 
-5.  **Environment Configuration:**
-    *   Copy the `.env.example` file to `.env` (this file includes Google's official Test Keys for easy local setup).
-    *   Update the `.env` file with your database credentials:
-    ```ini
-    APP_ENV=development
-    
-    DB_HOST=localhost:3306
-    DB_NAME=your_database_name
-    DB_USER=your_database_user
-    DB_PASS=your_database_pass
-    DB_CHARSET=utf8mb4
-    
-    # Official Google Test Keys (Automatically pass locally without setup)
-    RECAPTCHA_SITE_KEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
-    RECAPTCHA_SECRET_KEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
-    ```
-6.  **Directory Permissions:**
-    *   Ensure the following directories are writable by your web server for template caching and image uploads:
-        *   `/cache/`
-        *   `/templates_c/`
-        *   `/public/uploads/products/`
+volumes:
+  db_data:
 
+networks:
+  steam-net:
+    driver: bridge
+```
 
-7.  **Web Server Configuration:**
-    *   Ensure that Apache's `mod_rewrite` module is enabled.
+### 2. Start the Application
+Open your terminal in the folder containing your docker-compose.yml and run:
 
-8.  **You're Ready!**
-    *   Navigate to your local development URL (e.g., `http://localhost/`).
-    *   **Admin Login:** You can log in with the admin credentials (`admin@gmail.com`, `admin`).
+docker-compose up -d
+
+### 3. Access the Platform
+Frontend: Navigate to http://localhost:8080
+Admin Access: Log in using admin@gmail.com / admin
 
 ---
 *Developed by Maxim Hrybok.*

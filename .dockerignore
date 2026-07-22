@@ -1,0 +1,7 @@
+.git
+.idea
+vendor/
+node_modules/
+.env
+cache/*
+templates_c/*
