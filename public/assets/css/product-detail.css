@@ -1,139 +1,86 @@
-/* ==========================================================================
-   1. Design System & Variables
-   ========================================================================== */
-/* We define colors and fonts as variables for consistency and easy updates. */
-:root {
-    --color-primary: #007bff;      /* A strong blue for buttons and actions */
-    --color-primary-hover: #0056b3;/* A darker blue for hover effects */
-    --color-text-dark: #212529;   /* Main text color, almost black */
-    --color-text-light: #6c757d;  /* Lighter text for descriptions */
-    --color-accent-red: #dc3545;  /* For discount prices */
-    --color-border: #dee2e6;       /* Light grey for borders and lines */
-    --color-background: #fff;     /* White background */
-    --font-primary: 'Helvetica Neue', Arial, sans-serif;
-}
-
-/* ==========================================================================
-   2. Mobile-First Styles (Default for all screen sizes)
-   ========================================================================== */
-
-/* The main container that centers the content and adds padding */
 .product-detail-container {
-    max-width: 1200px;
-    margin: 2rem auto; /* Centers the container and adds space top/bottom */
-    padding: 0 1rem;   /* Ensures content doesn't touch screen edges on mobile */
-    font-family: var(--font-primary);
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
 }
 
-/* The main article element holding the image and info */
 .product-detail {
-    background-color: var(--color-background);
-    border-radius: 8px;
-    overflow: hidden; /* Keeps the image corners rounded */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
 }
 
-/* --- Image Styles --- */
 .product-detail__image-wrapper {
-    background-color: #f8f9fa; /* A very light grey background for the image */
+    background-color: #0b1121;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .product-detail__image-wrapper img {
-    display: block;    /* Removes bottom space under the image */
-    width: 100%;       /* Makes the image responsive */
-    height: auto;
-    aspect-ratio: 1 / 1; /* Ensures image block is a square, common for products */
-    object-fit: contain; /* Ensures the whole image fits without distortion */
+    max-width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
 }
 
-/* --- Product Info Styles --- */
 .product-detail__info {
-    padding: 1.5rem;
+    padding: 2.5rem;
     display: flex;
-    flex-direction: column; /* Stacks info elements vertically */
-    gap: 1rem; /* Adds space between info elements */
+    flex-direction: column;
+    gap: 1.2rem;
 }
 
 .product-detail__title {
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: var(--color-text-dark);
-    margin: 0;
-    line-height: 1.2;
+    font-size: 2rem;
+    color: var(--text-main);
 }
 
 .product-detail__description {
-    font-size: 1rem;
-    color: var(--color-text-light);
-    line-height: 1.6;
-    margin: 0;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
 }
 
-/* --- Pricing Styles --- */
 .product-detail__pricing {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin: 0.5rem 0;
+    align-items: baseline;
+    gap: 15px;
+    margin: 1rem 0;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
 }
 
-.product-detail__pricing .price,
-.product-detail__pricing .new-price {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--color-text-dark);
-}
+.product-detail__pricing .new-price { font-size: 2.5rem; color: var(--accent); }
+.product-detail__pricing .old-price { font-size: 1.2rem; }
+.product-detail__pricing .price { font-size: 2.5rem; color: var(--text-main); }
 
-.product-detail__pricing .new-price {
-    color: var(--color-accent-red); /* Highlight the discounted price */
-}
-
-.product-detail__pricing .old-price {
-    font-size: 1.25rem;
-    color: var(--color-text-light);
-}
-
-/* --- Add to Cart Button --- */
 .product-detail__add-to-cart {
-    background-color: var(--color-primary);
+    background: var(--primary);
     color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1.15rem;
+    padding: 1rem;
     border: none;
-    border-radius: 5px;
-    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
     cursor: pointer;
-    text-align: center;
-    transition: background-color 0.2s ease-in-out;
-    width: 100%; /* Makes button full-width on mobile */
+    font-weight: 600;
+    transition: 0.2s;
+    width: 100%;
+    max-width: 300px;
 }
 
 .product-detail__add-to-cart:hover {
-    background-color: var(--color-primary-hover);
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
 }
 
-/* ==========================================================================
-   3. Tablet & Desktop Styles (for screens 768px and wider)
-   ========================================================================== */
 @media (min-width: 768px) {
-    /* Change the layout to a two-column grid */
     .product-detail {
         display: grid;
-        grid-template-columns: 1fr 1fr; /* Two equal columns */
-        gap: 2rem;
-    }
-
-    .product-detail__info {
-        padding: 2rem;
-        justify-content: center; /* Vertically center the content in the column */
-    }
-
-    .product-detail__title {
-        font-size: 2.5rem;
-    }
-
-    .product-detail__add-to-cart {
-        width: auto; /* Allow the button to size to its content */
-        max-width: 250px; /* But don't let it get too wide */
+        grid-template-columns: 1fr 1fr;
     }
 }

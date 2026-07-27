@@ -1,41 +1,53 @@
-ul {
+header {
+    background-color: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+nav ul {
     list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333333;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    min-height: 60px;
 }
-ul li {
-    float: left;
-}
-ul li a{
+
+nav ul li a {
     display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
+    color: var(--text-main);
     text-decoration: none;
+    padding: 10px 16px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s;
 }
-ul li a:hover{
-    background-color: #111111;
+
+nav ul li a:hover {
+    background-color: var(--bg-surface-hover);
+    color: white;
 }
-#logreg{
-    float: right;
+
+/* Push right-side links (login/cart) to the end */
+.logreg{
+    margin-left: auto; 
 }
+
 .cart-link {
-    display: flex !important; /* Forces flexbox to align text and badge nicely */
-    align-items: center;      /* Vertically centers them */
-    gap: 6px;                 /* Adds a small gap between "Cart" and the badge */
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
 }
 
 .cart-badge {
-    background-color: #ff6633; /* Matches your accent color */
-    color: #ffffff;
+    background-color: var(--accent);
+    color: white;
     font-size: 12px;
     font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 12px;       /* Creates a pill/circle shape */
-    min-width: 20px;
-    text-align: center;
-    line-height: 1.2;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Gives it a slight 3D pop */
+    padding: 2px 8px;
+    border-radius: 12px;
 }
