@@ -2,7 +2,7 @@
 
 
 A full-stack e-commerce web application built from the ground up using modern PHP, a custom MVC architecture, and industry-standard tools. This project demonstrates advanced software engineering principles, clean architecture, and modern DevOps practices without relying on heavy frameworks like Laravel or Symfony.
-**Live Demo:** [**https://somesite.ct.ws/**](https://somesite.ct.ws/)
+**Live Demo:** [**https://demonstration.free.nf/products**](https://demonstration.free.nf/products)
 
 ---
 
