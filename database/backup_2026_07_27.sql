@@ -25,15 +25,18 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table project.categories: ~5 rows (approximately)
+-- Dumping data for table project.categories: ~8 rows (approximately)
 INSERT INTO `categories` (`id`, `name`) VALUES
 	(1, 'Electronics'),
-	(2, 'Books_2'),
+	(2, 'Books'),
 	(3, 'Clothing'),
 	(4, 'Dota2'),
-	(6, '1');
+	(9, 'Music'),
+	(10, 'Sport'),
+	(11, 'Video Games'),
+	(12, 'Puzzles');
 
 -- Dumping structure for table project.comments
 CREATE TABLE IF NOT EXISTS `comments` (
@@ -48,12 +51,13 @@ CREATE TABLE IF NOT EXISTS `comments` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `fk_comment_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_comment_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Dumping data for table project.comments: ~2 rows (approximately)
+-- Dumping data for table project.comments: ~3 rows (approximately)
 INSERT INTO `comments` (`id`, `product_id`, `user_id`, `content`, `status`, `created_at`) VALUES
 	(1, 15, 2, 'oh yee first comm xd', 'approved', '2026-05-04 18:47:28'),
-	(2, 15, 2, 'asdf', 'approved', '2026-05-05 21:27:49');
+	(2, 15, 2, 'asdf', 'approved', '2026-05-05 21:27:49'),
+	(3, 21, 2, 'Yeap Goood one', 'approved', '2026-07-27 10:01:46');
 
 -- Dumping structure for table project.login_attempts
 CREATE TABLE IF NOT EXISTS `login_attempts` (
@@ -63,9 +67,9 @@ CREATE TABLE IF NOT EXISTS `login_attempts` (
   `last_attempt` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ip_address` (`ip_address`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table project.login_attempts: ~0 rows (approximately)
+-- Dumping data for table project.login_attempts: ~1 rows (approximately)
 
 -- Dumping structure for table project.order_items
 CREATE TABLE IF NOT EXISTS `order_items` (
@@ -177,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `product_category_map` (
   CONSTRAINT `product_category_map_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table project.product_category_map: ~13 rows (approximately)
+-- Dumping data for table project.product_category_map: ~21 rows (approximately)
 INSERT INTO `product_category_map` (`product_id`, `category_id`) VALUES
 	(1, 1),
 	(2, 1),
@@ -185,13 +189,21 @@ INSERT INTO `product_category_map` (`product_id`, `category_id`) VALUES
 	(4, 2),
 	(6, 4),
 	(7, 4),
-	(8, 3),
-	(9, 2),
-	(10, 2),
 	(11, 2),
-	(13, 6),
+	(13, 2),
+	(13, 3),
 	(14, 4),
-	(15, 2);
+	(15, 2),
+	(18, 1),
+	(18, 9),
+	(19, 9),
+	(20, 1),
+	(21, 10),
+	(22, 1),
+	(22, 9),
+	(23, 2),
+	(24, 11),
+	(26, 12);
 
 -- Dumping structure for table project.products
 CREATE TABLE IF NOT EXISTS `products` (
@@ -201,27 +213,33 @@ CREATE TABLE IF NOT EXISTS `products` (
   `image_url` varchar(255) DEFAULT NULL,
   `status` enum('available','unavailable') NOT NULL DEFAULT 'available',
   `discount` decimal(5,2) NOT NULL DEFAULT 0.00,
-  `description` tinytext DEFAULT NULL,
+  `description` text DEFAULT NULL,
   `stock` int(11) DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table project.products: ~14 rows (approximately)
+-- Dumping data for table project.products: ~20 rows (approximately)
 INSERT INTO `products` (`id`, `name`, `price`, `image_url`, `status`, `discount`, `description`, `stock`) VALUES
 	(1, 'Smartphonexx', 500.11, '/public/assets/img/steam.png', 'available', 12.00, 'yes ', 112),
-	(2, 'Laptop', 899.50, '/public/assets/img/steam.png', 'available', 5.00, 'asdfg', 117),
-	(3, 'T-shirt', 19.99, '/public/assets/img/steam.png', 'available', 0.00, 'asdfgh', 119),
+	(2, 'Laptop', 899.50, '/public/assets/img/steam.png', 'unavailable', 5.00, 'asdfg', 117),
+	(3, 'T-shirt', 19.99, '/public/assets/img/steam.png', 'unavailable', 0.00, 'asdfgh', 119),
 	(4, 'Novel Book', 12.50, '/public/assets/img/steam.png', 'available', 0.00, 'asdfghj', 19),
-	(6, 'BOBA', 222.00, '/public/assets/img/steam.png', 'available', 22.00, 'MEGA BOBA asdf', 1),
-	(7, 'Dota 3 ', 22.00, '/public/assets/img/steam.png', 'available', 5.00, 'Yest spam productssss', 29),
-	(8, '2', 2.00, '/public/assets/img/steam.png', 'available', 2.00, '2', 2),
-	(9, '3', 3.00, '/public/assets/img/steam.png', 'available', 3.00, '3', 3),
-	(10, '4', 4.00, '/public/assets/img/steam.png', 'available', 4.00, '4', 4),
-	(11, '5', 5.00, '/public/assets/img/steam.png', 'available', 5.00, '5', 3),
-	(12, '6', 6.00, '/public/assets/img/steam.png', 'available', 5.00, '6', 0),
-	(13, 'cccat baaaad', 4.00, 'prod_69ee16d79e8824.14542168.jpg', 'available', 0.00, 'worst cat...', 3),
+	(6, 'BOBA', 222.00, '/public/assets/img/steam.png', 'unavailable', 22.00, 'MEGA BOBA asdf', 1),
+	(7, 'Dota 3 ', 22.00, '/public/assets/img/steam.png', 'unavailable', 5.00, 'Yest spam productssss', 29),
+	(11, '6', 5.00, '/public/assets/img/steam.png', 'unavailable', 5.00, '5', 3),
+	(12, '6', 6.00, '/public/assets/img/steam.png', 'unavailable', 5.00, '6', 0),
+	(13, 'cccat baaaad', 4.00, 'prod_69ee16d79e8824.14542168.jpg', 'unavailable', 0.00, 'worst cat...', 3),
 	(14, 'bestCat', 12.00, 'prod_69ee0ea4669f76.32365850.jpg', 'available', 0.00, 'BEST CAT EVEERERERER', 4),
-	(15, 'ddd', 123.00, 'prod_69ee19ba58a669.31622908.jpg', 'available', 3.00, 'asdf', 2);
+	(15, 'ddd', 123.00, 'prod_69ee19ba58a669.31622908.jpg', 'unavailable', 3.00, 'asdf', 2),
+	(18, 'Guitar Tipe 1', 299.00, 'prod_6a672a0969da99.36197453.jpg', 'available', 0.00, 'Electro Guitar', 5),
+	(19, 'Guitar Tipe 2', 1000.00, 'prod_6a672ac0ef67c5.51621725.jpg', 'available', 50.00, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 3),
+	(20, 'Blender', 25.00, 'prod_6a672c583e66e6.00989726.jpg', 'available', 0.00, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 25),
+	(21, 'Ball', 100.00, 'prod_6a672c7914ea06.76244822.jpg', 'available', 80.00, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 20),
+	(22, 'JBBL tipe X', 70.00, 'prod_6a672cd680e2e8.43544075.jpg', 'available', 0.00, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 12),
+	(23, 'Clean code ENG', 1000.00, 'prod_6a672d0ca378a3.70205227.jpg', 'available', 99.00, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 0),
+	(24, 'CSGO 1:2:0', 20.00, 'prod_6a672d60b27557.24479352.jpg', 'available', 25.00, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 25),
+	(25, 'Doss', 99999.00, 'prod_6a672d8a37e946.41498038.jpg', 'available', 0.00, 'My Doss', 0),
+	(26, 'One Piece Puzzle', 50.00, 'prod_6a672dac72e409.64444133.jpg', 'available', 0.00, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum', 12);
 
 -- Dumping structure for table project.users
 CREATE TABLE IF NOT EXISTS `users` (
@@ -233,15 +251,17 @@ CREATE TABLE IF NOT EXISTS `users` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Dumping data for table project.users: ~5 rows (approximately)
+-- Dumping data for table project.users: ~7 rows (approximately)
 INSERT INTO `users` (`id`, `email`, `password_hash`, `first_name`, `is_admin`, `created_at`) VALUES
 	(1, 'haker@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$WjJ2dmI1aUV5Vm1PRjV2bQ$LWSO9X2zFP7vD+S0IZwHwhMu692goTeIsw9agpqt4GI', 'caster', 0, '2026-02-24 11:51:43'),
 	(2, 'admin@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$eHJJZG5zLnRYdmVkYi93Sw$tKueDAb7TE7uHYJWps07IMJa5ZuBawN90xFM48x+BPo', 'adminka', 1, '2026-03-01 19:25:57'),
 	(3, 'admin@gmail.c', 'a', 'adminka2', 0, '2026-03-31 12:30:44'),
 	(5, 'admin2@gmail.com', '1', 'admin2@gmail.com', 0, '2026-04-09 13:13:11'),
-	(6, 'admin3@gmail.com', '1', 'chykcha', 0, '2026-04-11 15:57:16');
+	(6, 'admin3@gmail.com', '1', 'chykcha', 0, '2026-04-11 15:57:16'),
+	(7, '6272715.work@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$SFV5VTFmMXdGNWhXN3V6OA$8MKevEhcCuitiUcgXVSJNQa2B7jpezwUA1/fEbjw+H4', 'adminka', 0, '2026-06-29 12:32:57'),
+	(8, '1231231@gmail.com', '$argon2id$v=19$m=65536,t=4,p=1$YkxyWTd2T2tuM0g5OWk5Tw$vgwKD+FjxM9T/MwyS31HSYFGXifwQChDDncrhMcc0SM', 'adminka22', 0, '2026-07-02 17:32:51');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
