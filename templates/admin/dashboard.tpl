@@ -10,6 +10,13 @@
         </div>
     </div>
 
+
+     {if isset($error)}
+        <div class="alert-error" style="margin-bottom: 20px;">
+            {$error}
+        </div>
+    {/if}
+    
     <!-- Admin Filters -->
     <form action="/admin" method="GET" class="admin-filters">
         

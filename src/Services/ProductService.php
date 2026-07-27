@@ -49,12 +49,32 @@ class ProductService {
         );
     }
 
+   
+
     public function deleteProduct(int $id): void {
         $product = $this->productRepo->findProductById($id);
-        if ($product && !empty($product['image_url']) && strpos($product['image_url'], '/') !== 0) {
-            $this->imageService->deleteImages($product['image_url']);
+        if (!$product) {
+            return;
         }
-        $this->productRepo->deleteProduct($id);
+
+        try {
+            // 1. Try to delete from the database FIRST
+            $this->productRepo->deleteProduct($id);
+
+            // 2. Only if the DB deletion succeeds, delete the physical images
+            if (!empty($product['image_url']) && strpos($product['image_url'], '/') !== 0) {
+                $this->imageService->deleteImages($product['image_url']);
+            }
+            
+        } catch (\PDOException $e) {
+            // Code 23000 means Foreign Key Constraint failed (Product is in an order)
+            if ($e->getCode() == '23000') {
+                throw new Exception("Cannot delete this product because it is linked to existing customer orders. Please edit it and set the status to 'Unavailable' instead.");
+            }
+            
+            // If it's a different database error, throw a generic message
+            throw new Exception("Database error occurred while trying to delete the product.");
+        }
     }
 
     private function validateProductData(array $data): void {

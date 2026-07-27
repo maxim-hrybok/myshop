@@ -239,7 +239,16 @@ class AdminController {
     }
 
     public function delete($vars) {
-        $this->productService->deleteProduct((int)$vars['id']);
+        $id = (int)$vars['id'];
+        
+        try {
+            $this->productService->deleteProduct($id);
+        } catch (Exception $e) {
+            // Store the error message in the session so the dashboard can show it
+            if (session_status() === PHP_SESSION_NONE) session_start();
+            $_SESSION['flash_error'] = $e->getMessage();
+        }
+        
         header('Location: /admin');
         exit();
     }
