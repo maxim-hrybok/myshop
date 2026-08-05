@@ -11,7 +11,10 @@ class CsrfMiddleware implements MiddlewareInterface {
     public function handle(string $uri, string $method): void {
         // Only check POST requests and ignore exempt routes
         if ($method === 'POST' && !in_array($uri, $this->exemptRoutes)) {
-            $submittedToken = $_POST['csrf_token'] ?? '';
+            
+            // 1. Ищем токен в стандартном POST (для обычных форм)
+            // 2. Ищем токен в заголовке X-CSRF-Token (для JSON API / fetch)
+            $submittedToken = $_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
             $sessionToken = $_SESSION['csrf_token'] ?? '';
             
             if (empty($sessionToken) || !hash_equals($sessionToken, $submittedToken)) {

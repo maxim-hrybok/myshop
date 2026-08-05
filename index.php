@@ -72,6 +72,9 @@ $smarty->assign('csrf_token', $_SESSION['csrf_token']);
 // Pass public reCAPTCHA key to frontend
 $smarty->assign('recaptcha_site_key', $config->get('recaptcha.site_key'));
 
+// Pass PayPal client ID to frontend
+$smarty->assign('paypal_client_id', $config->get('paypal.client_id')); 
+
 $cartItemCount = 0;
 if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
     $cartItemCount = array_sum($_SESSION['cart']);

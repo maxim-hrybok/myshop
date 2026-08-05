@@ -57,4 +57,11 @@ return function(RouteCollector $r) {
     $r->addRoute('GET', '/admin/orders/edit/{id:\d+}', ['App\Controllers\AdminController', 'editOrder', $adminMw]);
     $r->addRoute('POST', '/admin/orders/update/{id:\d+}', ['App\Controllers\AdminController', 'updateOrderStatus', $adminMw]);
     $r->addRoute('POST', '/admin/orders/delete/{id:\d+}', ['App\Controllers\AdminController', 'deleteOrder', $adminMw]);
+
+    // API ROUTES (Requires AuthMiddleware)
+    $r->addRoute('POST', '/api/paypal/create-order', ['App\Controllers\Api\PayPalController', 'createOrder', $authMw]);
+    $r->addRoute('POST', '/api/paypal/capture-order', ['App\Controllers\Api\PayPalController', 'captureOrder', $authMw]);
+
+    // WEBHOOK ROUTE (No Auth, CSRF already excluded in CsrfMiddleware)
+    $r->addRoute('POST', '/api/paypal/webhook', ['App\Controllers\Api\PayPalController', 'webhook', []]);
 };

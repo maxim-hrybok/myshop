@@ -4,7 +4,8 @@ use DI\ContainerBuilder;
 use Psr\Container\ContainerInterface;
 use App\Config\ConfigService;
 
-
+use App\Services\Contracts\PaymentServiceInterface;
+use App\Services\PayPalService;
 
 date_default_timezone_set('UTC');
 return [
@@ -48,5 +49,9 @@ return [
         });
 
         return $smarty;
-    }
+    },
+
+    // Bind the PaymentServiceInterface to the PayPalService implementation
+    PaymentServiceInterface::class => \DI\autowire(\App\Services\PayPalService::class),
+
 ];

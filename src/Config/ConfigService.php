@@ -18,6 +18,11 @@ class ConfigService {
             'recaptcha' => [
                 'site_key'   => $env['RECAPTCHA_SITE_KEY'] ?? '',
                 'secret_key' => $env['RECAPTCHA_SECRET_KEY'] ?? '',
+            ],
+            'paypal' => [
+                'client_id' => $env['PAYPAL_CLIENT_ID'] ?? '',
+                'secret'    => $env['PAYPAL_SECRET'] ?? '',
+                'mode'      => $env['PAYPAL_MODE'] ?? 'sandbox',
             ]
         ];
     }
