@@ -83,14 +83,20 @@ services:
       - DB_USER=root
       - DB_PASS=secret
       - DB_CHARSET=utf8mb4
-      - RECAPTCHA_SITE_KEY= ###https://www.google.com/recaptcha/admin
-      - RECAPTCHA_SECRET_KEY= ###https://www.google.com/recaptcha/admin
+      # Get keys from: https://www.google.com/recaptcha/admin
+      - RECAPTCHA_SITE_KEY=your_recaptcha_site_key_here
+      - RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key_here
+      # Get keys from: https://developer.paypal.com/dashboard/
+      - PAYPAL_CLIENT_ID=your_paypal_client_id_here
+      - PAYPAL_SECRET=your_paypal_secret_here
+      - PAYPAL_MODE=sandbox
+    depends_on:
       - db
     networks:
       - steam-net
 
   db:
-    # pre-seeded database image
+    # Pre-seeded database image!
     image: 6272715work/steamshop-db:latest
     container_name: steamshop_db
     ports:
@@ -108,7 +114,7 @@ volumes:
 
 networks:
   steam-net:
-    driver: bridge
+    driver: bridge  
 ```
 
 ### 2. Start the Application
